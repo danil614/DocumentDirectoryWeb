@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Document Converter";
+}
+
+<h2>Document Converter</h2>
+
+<!-- Кнопка, открывающая модальное окно -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#convertModal">
+    Convert to PDF
+</button>
+
+<!-- Модальное окно -->
+<div class="modal fade" id="convertModal" tabindex="-1" aria-labelledby="convertModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="convertModalLabel">Convert to PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Форма для загрузки файла -->
+                <form id="convertForm" enctype="multipart/form-data" method="post">
+                    <div class="mb-3">
+                        <label for="nameInput" class="form-label">Name</label>
+                        <input class="form-control" type="text" name="name" id="nameInput">
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryInput" class="form-label">Category</label>
+                        <input class="form-control" type="text" name="category" id="categoryInput">
+                    </div>
+                    <div class="mb-3">
+                        <label for="fileInput" class="form-label">Choose File</label>
+                        <input class="form-control" type="file" name="file" id="fileInput">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="saveAndConvert()">Save and Convert</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function saveAndConvert() {
+  // Получение значений из полей
+  var name = $('#nameInput').val();
+  var category = $('#categoryInput').val();
+  var fileInput = $('#fileInput')[0];
+  var file = fileInput.files[0];
+
+  // Создание объекта FormData для передачи данных формы
+  var formData = new FormData();
+  formData.append('name', name);
+  formData.append('category', category);
+  formData.append('file', file);
+
+  // Отправка данных на сервер с помощью AJAX
+  $.ajax({
+    url: '/Document/ConvertToPdf',
+    type: 'POST',
+    data: formData,
+    processData: false,
+    contentType: false,
+    success: function (response) {
+      // Обработка успешного ответа от сервера
+      console.log(response);
+    },
+    error: function (xhr, status, error) {
+      // Обработка ошибки
+      console.log('Error:', error);
+    }
+  });
+}
+</script>
