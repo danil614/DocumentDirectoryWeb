@@ -76,16 +76,35 @@ public class DocumentManagementController : Controller
         {
             // Получаем расширение файла
             var extension = Path.GetExtension(file.FileName);
-            // Формируем имя файла с использованием GUID
-            var fileName = fileId + extension;
-            
-            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", fileName);
+            var isPdf = extension is ".pdf";
+            string filePath;
+            message = "";
 
+            if (isPdf)
+            {
+                filePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
+            }
+            else if (extension is ".doc" or ".docx")
+            {
+                // Формируем имя файла с использованием GUID
+                var fileName = fileId + extension;
+                filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", fileName);
+            }
+            else
+            {
+                message = "Произошла ошибка: разрешены только файлы PDF, DOC и DOCX.";
+                return false;
+            }
+            
             using (var stream = new FileStream(filePath, FileMode.Create))
             {
                 file.CopyTo(stream);
             }
 
+            // Если файл pdf, его не нужно преобразовывать
+            if (isPdf) return true;
+            
+            // Иначе преобразовываем doc/docx в pdf
             var wordApplication = new Application();
             var wordDocument = wordApplication.Documents.Open(filePath);
 
@@ -97,7 +116,6 @@ public class DocumentManagementController : Controller
 
             //TODO: System.IO.File.Delete(filePath);
 
-            message = "";
             return true;
         }
         catch (Exception ex)

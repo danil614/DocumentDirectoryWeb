@@ -17,27 +17,24 @@
                 @Html.Hidden("Id", Model.Id)
                 @Html.Hidden("isEdit", isEdit)
                     
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2" asp-for="Name"></label>
-                    <div class="col-sm-10">
-                        <textarea class="form-control" rows="8" asp-for="Name"></textarea>
-                        <span class="text-danger" asp-validation-for="Name"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2" asp-for="CategoryId"></label>
-                    <div class="col-sm-10">
-                        @Html.DropDownListFor(
-                            item => item.CategoryId,
-                            new SelectList(ViewBag.Categories, "Id", "Name"),
-                            new { @class = "form-select" })
-                        <span class="text-danger" asp-validation-for="CategoryId"></span>
-                    </div>
+                <div class="mb-3">
+                    <label class="form-label" asp-for="Name"></label>
+                    <textarea class="form-control" rows="8" asp-for="Name"></textarea>
+                    <span class="text-danger" asp-validation-for="Name"></span>
                 </div>
 
                 <div class="mb-3">
-                    <input class="form-control" type="file" name="file" id="fileInput">
+                    <label class="form-label" asp-for="CategoryId"></label>
+                    @Html.DropDownListFor(
+                        item => item.CategoryId,
+                        new SelectList(ViewBag.Categories, "Id", "Name"),
+                        new { @class = "form-select" })
+                    <span class="text-danger" asp-validation-for="CategoryId"></span>
+                </div>
+
+                <div class="mb-3">
+                    <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx">
+                    <div id="error" class="text-danger" style="display: none;">Разрешены только файлы PDF, DOC и DOCX.</div>
                 </div>
             </form>
         </div>
@@ -49,6 +46,11 @@
     </div>
 </div>
 
+<div id="spinner" class="spinner-border" role="status">
+  <span class="visually-hidden">Loading...</span>
+</div>
+
+
 <script>
     function saveAndConvert() {
         // Получение значений из полей
@@ -56,12 +58,22 @@
         const categoryId = $('#CategoryId').val();
         const fileInput = $('#fileInput')[0];
         const file = fileInput.files[0];
+        const filePath = fileInput.value;
+        
+        const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+          
+        if (!allowedExtensions.exec(filePath)) {
+            document.getElementById("error").style.display = "block";
+            return;
+        }
     
         // Создание объекта FormData для передачи данных формы
         let formData = new FormData();
         formData.append('name', name);
         formData.append('categoryId', categoryId);
         formData.append('file', file);
+        
+        $("#spinner").show();
     
         // Отправка данных на сервер с помощью AJAX
         $.ajax({
@@ -73,6 +85,10 @@
           success: function (response) {
             // Обработка успешного ответа от сервера
             console.log(response);
+            // Закрываем окно, перезагружаем страницу
+            $('#modalWindow').modal('hide');
+            $("#spinner").hide();
+            location.reload();
           },
           error: function (xhr, status, error) {
             // Обработка ошибки
@@ -80,7 +96,5 @@
             alert("Произошла ошибка при загрузке данных.");
           }
         });
-        
-        $('#modalWindow').modal('hide');
     }
 </script>
