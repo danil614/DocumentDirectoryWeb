@@ -22,7 +22,9 @@ public class ApplicationContext : DbContext
         );
 
         modelBuilder.Entity<Document>().HasData(
-            new Document { Id = "1", Name = "Resume-1 Test", CategoryId = 1 }
+            new Document { Id = "1", Name = "Документ Тест Перепись 1", CategoryId = 1 },
+            new Document { Id = "2", Name = "Документ Тест Проектная документация", CategoryId = 2 },
+            new Document { Id = "3", Name = "Документ Тест Заработная Плата", CategoryId = 2 }
         );
     }
 }
