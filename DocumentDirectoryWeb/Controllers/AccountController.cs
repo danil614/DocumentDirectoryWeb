@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
+using System.Security.Principal;
 using DocumentDirectoryWeb.Helpers;
 using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DocumentDirectoryWeb.Controllers;
 
@@ -32,38 +32,84 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> Login(User user)
+    public IActionResult WindowsLogin()
     {
-        if (user.Password is null)
-        {
-            ViewBag.ErrorText = "Пароль не может быть пустым!";
-            return View(user);
-        }
+        string? username = null;
+        string? userSid = null;
         
-        if (ModelState.IsValid)
+        // Получаем имя пользователя и ключ Windows
+        try
         {
-            var item = _context.Users.Include(u => u.UserType).FirstOrDefault(
-                item =>
-                    item.Login == user.Login &&
-                    item.Password == HashPassword.GetHash(user.Password));
-
-            if (item is null)
-            {
-                ViewBag.ErrorText = "Пользователь с указанным логином и паролем не найден!";
-                return View(user);
-            }
-
-            var claimsPrincipal = GetClaimsPrincipal(user.Login, user.UserType?.Name!, user.FullName);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
-
-            return RedirectToAction("Index", "Home");
+#pragma warning disable CA1416
+            // Получение текущего пользователя
+            var currentIdentity = WindowsIdentity.GetCurrent();
+            // Получение имени пользователя
+            username = currentIdentity.Name.Split(@"\")[1];
+            // Получение ключа пользователя
+            userSid = currentIdentity.User?.Value;
+#pragma warning restore CA1416
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
         }
 
-        return View(user);
+        // Если не удалось получить, то выводим ошибку
+        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userSid))
+        {
+            ViewBag.ErrorText = "Вход возможен только с использованием логина и пароля!";
+            return View("Login");
+        }
+
+        // Получаем пользователя из базы данных
+        var user = _context.Users.FirstOrDefault(u => u.Id == userSid && u.Login == username);
+
+        // Если пользователя нет, отправляем на регистрацию
+        if (user is null)
+        {
+            user = new User
+            {
+                Id = userSid,
+                Login = username
+            };
+
+            ViewBag.Departments = _context.Departments.ToList();
+            return View("Registration", user);
+        }
+
+        // Если пользователь есть, то входим в систему
+        SignIn(user.Login, user.UserTypeId, user.FullName);
+        return RedirectToAction("Index", "Home");
     }
 
-    public static ClaimsPrincipal GetClaimsPrincipal(string login, string userType, string fullName)
+    [HttpPost]
+    public IActionResult Login(User user)
     {
+        if (string.IsNullOrEmpty(user.Login) || string.IsNullOrEmpty(user.Password))
+        {
+            ViewBag.ErrorText = "Логин и пароль не могут быть пустыми!";
+            return View(user);
+        }
+
+        var item = _context.Users.FirstOrDefault(
+            u =>
+                u.Login == user.Login &&
+                u.Password == HashPassword.GetHash(user.Password));
+
+        if (item is null)
+        {
+            ViewBag.ErrorText = "Пользователь с указанным логином и паролем не найден!";
+            return View(user);
+        }
+
+        SignIn(item.Login, item.UserTypeId, item.FullName);
+        return RedirectToAction("Index", "Home");
+    }
+
+    private void SignIn(string login, int userTypeId, string fullName)
+    {
+        var userType = _context.UserTypes.FirstOrDefault(t => t.Id == userTypeId)?.SystemName ?? "User";
+        
         var claims = new List<Claim>
         {
             new(ClaimsIdentity.DefaultNameClaimType, login),
@@ -75,8 +121,8 @@ public class AccountController : Controller
             ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-
-        return claimsPrincipal;
+        
+        HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
     }
     
     [HttpPost]
@@ -97,12 +143,19 @@ public class AccountController : Controller
                 _context.Users.Add(user);
             }
 
-
             var rowsAffected = _context.SaveChanges();
-            return rowsAffected > 0 ? RedirectToAction("Index", "Home") : StatusCode(StatusCodes.Status500InternalServerError);
+
+            if (rowsAffected > 0)
+            {
+                SignIn(user.Login, user.UserTypeId, user.FullName);
+                return RedirectToAction("Index", "Home");
+            }
         }
 
-        return View("Registration", user);
+        
+        ViewBag.ErrorText = "Ошибка регистрации!";
+        ViewBag.Departments = _context.Departments.ToList();
+        return  View("Registration", user);
     }
 
     [HttpGet]

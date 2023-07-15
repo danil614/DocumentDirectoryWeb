@@ -1,14 +1,17 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace DocumentDirectoryWeb.Models;
 
+[PrimaryKey(nameof(Id), nameof(Login))]
 [Table("Users")]
 public class User
 {
     [Key]
     public string Id { get; set; } = null!;
     
+    [Key]
     [Required(ErrorMessage = "Поле является обязательным.")]
     [Display(Name = "Имя пользователя")]
     public string Login { get; set; } = null!;
