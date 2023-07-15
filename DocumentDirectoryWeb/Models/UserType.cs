@@ -2,17 +2,16 @@
 
 namespace DocumentDirectoryWeb.Models;
 
-public class DocumentCategory
+public class UserType
 {
     [Key]
-    public long Id { get; set; }
+    public int Id { get; set; }
     
     [Required(ErrorMessage = "Поле является обязательным.")]
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
-
-    public override string ToString()
-    {
-        return Name;
-    }
+    
+    [Required(ErrorMessage = "Поле является обязательным.")]
+    [Display(Name = "Системное имя")]
+    public string SystemName { get; set; } = null!;
 }

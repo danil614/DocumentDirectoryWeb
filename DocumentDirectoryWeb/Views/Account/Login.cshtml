@@ -1,0 +1,48 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model User
+
+@{
+    ViewData["Title"] = "Вход в аккаунт";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col-5">
+        @if (ViewBag.ErrorText != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.ErrorText
+            </div>
+        }
+
+        @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+
+            <div class="mb-3 row">
+                <label class="col-form-label col-sm-2" asp-for="Login"></label>
+                <div class="col-sm-10">
+                    <input class="form-control" asp-for="Login"/>
+                    <span class="text-danger" asp-validation-for="Login"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 row">
+                <label class="col-form-label col-sm-2" asp-for="Password"></label>
+                <div class="col-sm-10">
+                    <input class="form-control" asp-for="Password"/>
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+            </div>
+
+            <div class="mb-3 row justify-content-end">
+                <div class="col-sm-3">
+                    <button class="btn btn-primary w-100" type="submit">Войти</button>
+                </div>
+            </div>
+        }
+    </div>
+    <div class="col"></div>
+</div>

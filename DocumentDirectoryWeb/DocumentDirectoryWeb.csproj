@@ -7,18 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Reference Include="Interop.Microsoft.Office.Interop.Word">
-        <HintPath>C:\Users\Danil\Downloads\Interop.Microsoft.Office.Interop.Word.dll</HintPath>
-      </Reference>
-    </ItemGroup>
-
-    <ItemGroup>
+      <Folder Include="Views\Home\" />
       <Folder Include="wwwroot\files\pdf\" />
       <Folder Include="wwwroot\uploads\" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.8" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Interop.Microsoft.Office.Interop.Word">
+        <HintPath>Interop.Microsoft.Office.Interop.Word.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>

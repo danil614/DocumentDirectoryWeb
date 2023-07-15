@@ -1,0 +1,52 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model User
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<h1 class="mb-4">@ViewData["Title"]</h1>
+
+<div class="row">
+    <div class="col"></div>
+    <div class="col-5">
+        @if (ViewBag.ErrorText != null)
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewBag.ErrorText
+            </div>
+        }
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post))
+        {
+            @Html.ValidationSummary(true)
+            @Html.Hidden("Id", Model.Id)
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="Login"></label>
+                <input class="form-control" asp-for="Login" readonly/>
+                <span class="text-danger" asp-validation-for="Login"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label" asp-for="FullName"></label>
+                <input class="form-control" asp-for="FullName"/>
+                <span class="text-danger" asp-validation-for="FullName"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" asp-for="DepartmentId"></label>
+                @Html.DropDownListFor(
+                        item => item.DepartmentId,
+                        new SelectList(ViewBag.Departments, "Id", "Name"),
+                        new { @class = "form-select" })
+                <span class="text-danger" asp-validation-for="DepartmentId"></span>
+            </div>
+
+            <div class="mb-3">
+                <button class="btn btn-primary float-right" type="submit">Зарегистрироваться</button>
+            </div>
+        }
+    </div>
+    <div class="col"></div>
+</div>

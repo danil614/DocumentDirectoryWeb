@@ -2,10 +2,10 @@
 
 namespace DocumentDirectoryWeb.Models;
 
-public class DocumentCategory
+public class Department
 {
     [Key]
-    public long Id { get; set; }
+    public int Id { get; set; }
     
     [Required(ErrorMessage = "Поле является обязательным.")]
     [Display(Name = "Название")]

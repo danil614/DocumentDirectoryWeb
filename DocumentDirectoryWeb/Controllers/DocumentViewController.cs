@@ -1,8 +1,10 @@
 ﻿using DocumentDirectoryWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentDirectoryWeb.Controllers;
 
+[Authorize(Roles = "Admin, Editor, User")]
 public class DocumentViewController : Controller
 {
     private readonly IWebHostEnvironment _hostingEnvironment;
