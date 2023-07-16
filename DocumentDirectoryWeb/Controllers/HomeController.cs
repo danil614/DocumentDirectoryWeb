@@ -1,7 +1,7 @@
 ﻿using System.Diagnostics;
 using DocumentDirectoryWeb.Helpers;
-using Microsoft.AspNetCore.Mvc;
 using DocumentDirectoryWeb.Models;
+using Microsoft.AspNetCore.Mvc;
 
 namespace DocumentDirectoryWeb.Controllers;
 
@@ -10,7 +10,7 @@ public class HomeController : Controller
     public IActionResult Index()
     {
         var userType = UserTabManager.GetUserType(User.Claims);
-        
+
         // Перенаправляем пользователя по роли
         switch (userType)
         {

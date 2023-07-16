@@ -18,7 +18,7 @@ public class SuperUserFactory
 
         if (password != null && username != null)
             return new SuperUser(username, password);
-        
+
         return new SuperUser("yUwKNeCKWf", "VkTPO7LlGE");
     }
 }

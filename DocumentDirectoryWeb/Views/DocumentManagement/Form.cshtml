@@ -11,12 +11,12 @@
             <h5 class="modal-title" id="convertModalLabel">@ViewData["Title"]</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-            
+
         <div class="modal-body">
             <form id="convertForm" enctype="multipart/form-data" method="post">
                 @Html.Hidden("Id", Model.Id)
                 @Html.Hidden("isEdit", isEdit)
-                    
+
                 <div class="mb-3">
                     <label class="form-label" asp-for="Name"></label>
                     <textarea class="form-control" rows="8" asp-for="Name"></textarea>
@@ -38,7 +38,7 @@
                 </div>
             </form>
         </div>
-            
+
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
             <button type="button" class="btn btn-primary" onclick="saveAndConvert()">Сохранить</button>
@@ -47,7 +47,7 @@
 </div>
 
 <div id="spinner" class="spinner-border" role="status">
-  <span class="visually-hidden">Loading...</span>
+    <span class="visually-hidden">Loading...</span>
 </div>
 
 <script>

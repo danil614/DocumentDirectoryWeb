@@ -7,8 +7,8 @@ namespace DocumentDirectoryWeb.Controllers;
 [Authorize(Roles = "Admin, Editor, User")]
 public class DocumentViewController : Controller
 {
-    private readonly IWebHostEnvironment _hostingEnvironment;
     private readonly ApplicationContext _context;
+    private readonly IWebHostEnvironment _hostingEnvironment;
 
     public DocumentViewController(IWebHostEnvironment hostingEnvironment, ApplicationContext context)
     {
@@ -32,10 +32,10 @@ public class DocumentViewController : Controller
                 ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null
             };
         }).ToList();
-        
+
         return View(documents);
     }
-    
+
     [HttpGet]
     public IActionResult GetPdf(string fileId)
     {
@@ -45,10 +45,7 @@ public class DocumentViewController : Controller
         try
         {
             // Проверяем, существует ли файл
-            if (!System.IO.File.Exists(filePath))
-            {
-                return NotFound();
-            }
+            if (!System.IO.File.Exists(filePath)) return NotFound();
 
             // Открываем поток для чтения файла
             var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read);

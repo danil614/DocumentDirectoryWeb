@@ -10,8 +10,8 @@ namespace DocumentDirectoryWeb.Controllers;
 [Authorize(Roles = "Admin, Editor")]
 public class DocumentManagementController : Controller
 {
-    private readonly IWebHostEnvironment _hostingEnvironment;
     private readonly ApplicationContext _context;
+    private readonly IWebHostEnvironment _hostingEnvironment;
 
     public DocumentManagementController(IWebHostEnvironment hostingEnvironment, ApplicationContext context)
     {

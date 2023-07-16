@@ -33,13 +33,13 @@
                 <input class="form-control" asp-for="FullName"/>
                 <span class="text-danger" asp-validation-for="FullName"></span>
             </div>
-            
+
             <div class="mb-3">
                 <label class="form-label" asp-for="DepartmentId"></label>
                 @Html.DropDownListFor(
-                        item => item.DepartmentId,
-                        new SelectList(ViewBag.Departments, "Id", "Name"),
-                        new { @class = "form-select" })
+                    item => item.DepartmentId,
+                    new SelectList(ViewBag.Departments, "Id", "Name"),
+                    new { @class = "form-select" })
                 <span class="text-danger" asp-validation-for="DepartmentId"></span>
             </div>
 

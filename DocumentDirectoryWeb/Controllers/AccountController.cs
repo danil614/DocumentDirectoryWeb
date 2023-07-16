@@ -33,7 +33,7 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Получает Sid и имя пользователя Windows.
+    ///     Получает Sid и имя пользователя Windows.
     /// </summary>
     private void GetWindowsUser(out string? username, out string? userSid)
     {
@@ -43,7 +43,7 @@ public class AccountController : Controller
         try
         {
             if (User.Identity is null) return;
-            
+
             // Получение имени пользователя
             username = User.Identity.Name?.Split(@"\")[1];
 
@@ -98,7 +98,7 @@ public class AccountController : Controller
             ViewBag.ErrorText = "Логин и пароль не могут быть пустыми!";
             return View(user);
         }
-        
+
         if (user.Login == _superUser.Username && user.Password == _superUser.Password)
         {
             SignIn(_superUser.Username, 3, "Суперпользователь");
@@ -121,12 +121,12 @@ public class AccountController : Controller
     }
 
     /// <summary>
-    /// Осуществляет вход в систему с помощью Cookie.
+    ///     Осуществляет вход в систему с помощью Cookie.
     /// </summary>
     private void SignIn(string login, int userTypeId, string fullName)
     {
         var userType = _context.UserTypes.FirstOrDefault(t => t.Id == userTypeId)?.SystemName ?? "User";
-        
+
         var claims = new List<Claim>
         {
             new(ClaimsIdentity.DefaultNameClaimType, login),
@@ -138,10 +138,10 @@ public class AccountController : Controller
             ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);
 
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
-        
+
         HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, claimsPrincipal);
     }
-    
+
     [HttpPost]
     public IActionResult Register(User user)
     {
@@ -169,10 +169,10 @@ public class AccountController : Controller
             }
         }
 
-        
+
         ViewBag.ErrorText = "Ошибка регистрации!";
         ViewBag.Departments = _context.Departments.ToList();
-        return  View("Registration", user);
+        return View("Registration", user);
     }
 
     [HttpGet]
