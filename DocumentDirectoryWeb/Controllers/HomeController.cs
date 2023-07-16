@@ -1,10 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Security.Principal;
 using DocumentDirectoryWeb.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using DocumentDirectoryWeb.Models;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace DocumentDirectoryWeb.Controllers;
 

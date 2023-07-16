@@ -1,5 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Security.Principal;
 using DocumentDirectoryWeb.Helpers;
 using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authentication;
@@ -11,10 +10,12 @@ namespace DocumentDirectoryWeb.Controllers;
 public class AccountController : Controller
 {
     private readonly ApplicationContext _context;
+    private readonly SuperUser _superUser;
 
-    public AccountController(ApplicationContext context)
+    public AccountController(ApplicationContext context, SuperUser superUser)
     {
         _context = context;
+        _superUser = superUser;
     }
 
     [HttpGet]
@@ -31,28 +32,35 @@ public class AccountController : Controller
         return View("Login");
     }
 
-    [HttpPost]
-    public IActionResult WindowsLogin()
+    /// <summary>
+    /// Получает Sid и имя пользователя Windows.
+    /// </summary>
+    private void GetWindowsUser(out string? username, out string? userSid)
     {
-        string? username = null;
-        string? userSid = null;
-        
-        // Получаем имя пользователя и ключ Windows
+        username = null;
+        userSid = null;
+
         try
         {
-#pragma warning disable CA1416
-            // Получение текущего пользователя
-            var currentIdentity = WindowsIdentity.GetCurrent();
+            if (User.Identity is null) return;
+            
             // Получение имени пользователя
-            username = currentIdentity.Name.Split(@"\")[1];
+            username = User.Identity.Name?.Split(@"\")[1];
+
             // Получение ключа пользователя
-            userSid = currentIdentity.User?.Value;
-#pragma warning restore CA1416
+            userSid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
         }
+    }
+
+    [HttpPost]
+    public IActionResult WindowsLogin()
+    {
+        // Получаем имя пользователя и ключ Windows
+        GetWindowsUser(out var username, out var userSid);
 
         // Если не удалось получить, то выводим ошибку
         if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userSid))
@@ -62,7 +70,7 @@ public class AccountController : Controller
         }
 
         // Получаем пользователя из базы данных
-        var user = _context.Users.FirstOrDefault(u => u.Id == userSid && u.Login == username);
+        var user = _context.Users.FirstOrDefault(u => u.Id == userSid);
 
         // Если пользователя нет, отправляем на регистрацию
         if (user is null)
@@ -90,6 +98,12 @@ public class AccountController : Controller
             ViewBag.ErrorText = "Логин и пароль не могут быть пустыми!";
             return View(user);
         }
+        
+        if (user.Login == _superUser.Username && user.Password == _superUser.Password)
+        {
+            SignIn(_superUser.Username, 3, "Суперпользователь");
+            return RedirectToAction("Index", "Home");
+        }
 
         var item = _context.Users.FirstOrDefault(
             u =>
@@ -106,6 +120,9 @@ public class AccountController : Controller
         return RedirectToAction("Index", "Home");
     }
 
+    /// <summary>
+    /// Осуществляет вход в систему с помощью Cookie.
+    /// </summary>
     private void SignIn(string login, int userTypeId, string fullName)
     {
         var userType = _context.UserTypes.FirstOrDefault(t => t.Id == userTypeId)?.SystemName ?? "User";
@@ -130,7 +147,7 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var isFound = _context.Users.Any(u => u.Id == user.Id && u.Login == user.Login);
+            var isFound = _context.Users.Any(u => u.Id == user.Id);
 
             // Если пользователя нет, отправляем на регистрацию
             if (isFound)
