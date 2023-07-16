@@ -1,0 +1,92 @@
+﻿@model User
+
+@{
+    bool isEdit = ViewBag.Edit;
+    ViewData["Title"] = (isEdit ? "Редактирование" : "Создание") + " пользователя";
+    const string controllerName = "Users";
+}
+
+<div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalLabel">@ViewData["Title"]</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+
+        <div class="modal-body">
+            <div id="formAlert" class="alert alert-danger" role="alert" style="display: none;">[TextContent]</div>
+            @using (Html.BeginForm("SaveItem", controllerName, FormMethod.Post))
+            {
+                @Html.ValidationSummary(true)
+                @Html.Hidden("Id", Model.Id)
+                @Html.Hidden("isEdit", isEdit)
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-3" asp-for="Login"></label>
+                    <div class="col-sm-9">
+                        <input class="form-control" asp-for="Login"/>
+                        <span class="text-danger" asp-validation-for="Login"></span>
+                    </div>
+                </div>
+        
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-3" asp-for="Password"></label>
+                    <div class="col-sm-9">
+                        <input class="form-control" asp-for="Password"/>
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                    </div>
+                </div>
+        
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-3" asp-for="FullName"></label>
+                    <div class="col-sm-9">
+                        <input class="form-control" asp-for="FullName"/>
+                        <span class="text-danger" asp-validation-for="FullName"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-3" asp-for="UserTypeId"></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(
+                            item => item.UserTypeId,
+                            new SelectList(ViewBag.UserTypes, "Id", "Name"),
+                            new { @class = "form-select" })
+                        <span class="text-danger" asp-validation-for="UserTypeId"></span>
+                    </div>
+                </div>
+        
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-3" asp-for="DepartmentId"></label>
+                    <div class="col-sm-9">
+                        @Html.DropDownListFor(
+                            item => item.DepartmentId,
+                            new SelectList(ViewBag.Departments, "Id", "Name"),
+                            new { @class = "form-select" })
+                        <span class="text-danger" asp-validation-for="DepartmentId"></span>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <div class="col-sm-2">
+                        <button class="btn btn-secondary w-100" type="button" data-bs-dismiss="modal">Закрыть</button>
+                    </div>
+                    <div class="col-sm-3">
+                        <button class="btn btn-primary w-100" type="submit">Сохранить</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@await Html.PartialAsync("_ValidationScriptsPartial");
+
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            event.preventDefault();
+            checkUnique('@controllerName');
+        });
+    });
+</script>

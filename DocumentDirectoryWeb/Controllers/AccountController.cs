@@ -81,7 +81,7 @@ public class AccountController : Controller
                 Login = username
             };
 
-            ViewBag.Departments = _context.Departments.ToList();
+            ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
             return View("Registration", user);
         }
 
@@ -170,7 +170,7 @@ public class AccountController : Controller
 
 
         ViewBag.ErrorText = "Ошибка регистрации!";
-        ViewBag.Departments = _context.Departments.ToList();
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
         return View("Registration", user);
     }
 

@@ -9,7 +9,8 @@ public static class UserTabManager
     {
         { "DocumentManagement", new TabItem("Управление документами", "DocumentManagement", "Index") },
         { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
-        { "Categories", new TabItem("Разделы", "Categories", "Index") }
+        { "Categories", new TabItem("Разделы", "Categories", "Index") },
+        { "Users", new TabItem("Пользователи", "Users", "Index") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)
