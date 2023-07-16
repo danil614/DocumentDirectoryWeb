@@ -8,7 +8,8 @@ public static class UserTabManager
     private static readonly Dictionary<string, TabItem> Tabs = new()
     {
         { "DocumentManagement", new TabItem("Управление документами", "DocumentManagement", "Index") },
-        { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") }
+        { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
+        { "Categories", new TabItem("Разделы", "Categories", "Index") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)

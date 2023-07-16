@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentDirectoryWeb.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace DocumentDirectoryWeb.Models;
+namespace DocumentDirectoryWeb.Helpers;
 
 public class ApplicationContext : DbContext
 {

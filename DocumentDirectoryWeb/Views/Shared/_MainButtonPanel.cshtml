@@ -1,0 +1,18 @@
+﻿@model string
+
+<div class="row justify-content-between">
+    <div class="row mt-4 mb-3 g-sm-2 col-sm-2">
+        <button class="btn btn-primary" type="button" onclick="createItem('@Model')">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp; Создание
+        </button>
+    </div>
+
+    <div class="row mt-4 mb-3 g-sm-2 col-sm-5">
+        <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Поиск" oninput="filterTable()">
+            <button id="clearButton" class="btn btn-outline-secondary" type="button" onclick="clearInputFilter()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+</div>

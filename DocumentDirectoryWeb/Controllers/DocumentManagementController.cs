@@ -1,4 +1,5 @@
-﻿using DocumentDirectoryWeb.Models;
+﻿using DocumentDirectoryWeb.Helpers;
+using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -38,7 +39,7 @@ public class DocumentManagementController : Controller
     }
 
     [HttpPost]
-    public IActionResult SaveItem(string name, long categoryId, IFormFile file, bool isEdit)
+    public IActionResult SaveItem(string name, int categoryId, IFormFile file, bool isEdit)
     {
         // Генерируем GUID
         var guid = Guid.NewGuid().ToString();
@@ -107,8 +108,7 @@ public class DocumentManagementController : Controller
             // Иначе преобразовываем doc/docx в pdf
             var pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
             ConvertToPdf(originalFilePath, pdfFilePath);
-
-            //TODO: System.IO.File.Delete(filePath);
+            System.IO.File.Delete(originalFilePath);
 
             return true;
         }

@@ -149,7 +149,6 @@ public class AccountController : Controller
         {
             var isFound = _context.Users.Any(u => u.Id == user.Id);
 
-            // Если пользователя нет, отправляем на регистрацию
             if (isFound)
             {
                 _context.Users.Update(user);

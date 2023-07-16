@@ -10,9 +10,9 @@ public class Document
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
 
-    [Display(Name = "Категория")]
+    [Display(Name = "Раздел")]
     [Required(ErrorMessage = "Поле является обязательным.")]
-    public long CategoryId { get; set; }
+    public int CategoryId { get; set; }
 
-    [Display(Name = "Категория")] public virtual DocumentCategory? Category { get; set; }
+    [Display(Name = "Раздел")] public virtual DocumentCategory? Category { get; set; }
 }
