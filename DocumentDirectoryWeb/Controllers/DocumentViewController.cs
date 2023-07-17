@@ -2,6 +2,7 @@
 using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace DocumentDirectoryWeb.Controllers;
 
@@ -22,26 +23,56 @@ public class DocumentViewController : Controller
     {
         var random = new Random();
 
-        var documents = _context.Documents.ToList().Select(e =>
-        {
-            var isReviewed = random.Next(2) != 0;
-            return new DocumentView
+        var documents = _context.Documents.Include(e => e.Category).ToList()
+            .Select(e =>
             {
-                Id = e.Id,
-                Name = e.Name,
-                IsReviewed = isReviewed,
-                ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null
-            };
-        }).ToList();
+                var isReviewed = random.Next(2) != 0;
+                return new DocumentView
+                {
+                    DocumentId = e.Id,
+                    Name = e.Name,
+                    IsReviewed = isReviewed,
+                    ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null,
+                    CategoryId = e.CategoryId,
+                    Category = e.Category
+                };
+            }).ToList();
 
+        ViewBag.showCategory = true;
         return View(documents);
     }
 
     [HttpGet]
-    public IActionResult Document(string fileId)
+    public IActionResult GetDocumentsByCategory(int categoryId, string categoryName)
+    {
+        var random = new Random();
+
+        var documents = _context.Documents.Include(e => e.Category)
+            .Where(d => d.CategoryId == categoryId).ToList()
+            .Select(e =>
+            {
+                var isReviewed = random.Next(2) != 0;
+                return new DocumentView
+                {
+                    DocumentId = e.Id,
+                    Name = e.Name,
+                    IsReviewed = isReviewed,
+                    ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null,
+                    CategoryId = e.CategoryId,
+                    Category = e.Category
+                };
+            }).ToList();
+
+        ViewBag.title = categoryName;
+        return View("Index", documents);
+    }
+
+    [HttpGet]
+    [Route("GetDocument/{id}/{name}")]
+    public IActionResult GetDocument(string id, string name)
     {
         // Создаем путь до файла
-        var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
+        var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{id}.pdf");
 
         try
         {

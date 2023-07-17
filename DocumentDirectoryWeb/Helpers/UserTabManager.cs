@@ -4,7 +4,7 @@ namespace DocumentDirectoryWeb.Helpers;
 
 public static class UserTabManager
 {
-// Создание словаря вкладок
+    // Создание словаря вкладок
     private static readonly Dictionary<string, TabItem> Tabs = new()
     {
         { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },

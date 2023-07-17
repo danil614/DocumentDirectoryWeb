@@ -1,7 +1,9 @@
-﻿@model List<DocumentView>
+﻿@using DocumentDirectoryWeb.Helpers
+@model List<DocumentView>
 
 @{
-    ViewData["Title"] = "Просмотр документов";
+    ViewData["Title"] = ViewBag.title ?? "Просмотр документов";
+    bool showCategory = ViewBag.showCategory ?? false;
 }
 
 <h1>@ViewData["Title"]</h1>
@@ -19,21 +21,30 @@
     <thead>
     <tr>
         <th>Название документа</th>
+        @if (showCategory)
+        {
+            <th>Раздел</th>
+        }
         <th>Ознакомлен</th>
         <th>Дата ознакомления</th>
         <th>Действия</th>
     </tr>
     </thead>
     <tbody>
-    @foreach (var document in Model)
+    @foreach (var item in Model)
     {
         <tr>
-            <td class="align-middle">@document.Name</td>
-            <td class="align-middle">@(document.IsReviewed ? "Да" : "Нет")</td>
-            <td class="align-middle">@(document.ReviewDate.HasValue ? document.ReviewDate.Value.ToShortDateString() : "")</td>
+            <td class="align-middle">@item.Name</td>
+            @if (showCategory)
+            {
+                <td class="align-middle">@item.Category</td>
+            }
+            <td class="align-middle">@(item.IsReviewed ? "Да" : "Нет")</td>
+            <td class="align-middle">@(item.ReviewDate.HasValue ? item.ReviewDate.Value.ToShortDateString() : "")</td>
             <td class="align-middle">
                 <button class="btn btn-primary btn-sm"
-                        onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')"
+                        onclick="openDocument('@Url.Action("GetDocument", "DocumentView",
+                                                   new { id = item.DocumentId, name = Scripts.KeepLettersAndSpacesOnly(item.Name) })')"
                         data-toggle="tooltip" data-placement="top" title="Просмотр">
                     Просмотр
                 </button>

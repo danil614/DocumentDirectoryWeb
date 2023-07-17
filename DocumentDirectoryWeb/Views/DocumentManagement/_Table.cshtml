@@ -1,4 +1,5 @@
-﻿@model IQueryable<Document>
+﻿@using DocumentDirectoryWeb.Helpers
+@model IQueryable<Document>
 
 @{
     const string controllerName = "DocumentManagement";
@@ -10,8 +11,9 @@
         <td class="align-middle">@document.Name</td>
         <td class="align-middle">@document.Category</td>
         <td class="align-middle">
-            <button class="btn btn-primary btn-sm" 
-                    onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')"
+            <button class="btn btn-primary btn-sm"
+                    onclick="openDocument('@Url.Action("GetDocument", "DocumentView", 
+                                               new { id = document.Id, name = Scripts.KeepLettersAndSpacesOnly(document.Name) })')"
                     data-toggle="tooltip" data-placement="top" title="Просмотр">
                 <i class="fa fa-eye" aria-hidden="true"></i>
             </button>
