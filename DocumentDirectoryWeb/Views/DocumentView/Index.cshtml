@@ -6,7 +6,16 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<table class="table table-striped table-hover">
+<div class="row mt-4 mb-3 g-sm-2 text-end">
+    <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Поиск" oninput="filterTable()">
+        <button id="clearButton" class="btn btn-outline-secondary" type="button" onclick="clearInputFilter()">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+</div>
+
+<table class="table table-striped table-hover" id="dataTable">
     <thead>
     <tr>
         <th>Название документа</th>
@@ -23,8 +32,9 @@
             <td class="align-middle">@(document.IsReviewed ? "Да" : "Нет")</td>
             <td class="align-middle">@(document.ReviewDate.HasValue ? document.ReviewDate.Value.ToShortDateString() : "")</td>
             <td class="align-middle">
-                <button class="btn btn-primary"
-                        onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')">
+                <button class="btn btn-primary btn-sm"
+                        onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')"
+                        data-toggle="tooltip" data-placement="top" title="Просмотр">
                     Просмотр
                 </button>
             </td>

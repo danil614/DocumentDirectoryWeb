@@ -2,7 +2,7 @@
 
 namespace DocumentDirectoryWeb.Models;
 
-public class DocumentCategory
+public class DocumentCategory : IComparable<DocumentCategory>
 {
     [Key] public int Id { get; set; }
 
@@ -13,5 +13,12 @@ public class DocumentCategory
     public override string ToString()
     {
         return Name;
+    }
+    
+    public int CompareTo(DocumentCategory? other)
+    {
+        if (ReferenceEquals(this, other)) return 0;
+        if (ReferenceEquals(null, other)) return 1;
+        return string.Compare(Name, other.Name, StringComparison.Ordinal);
     }
 }

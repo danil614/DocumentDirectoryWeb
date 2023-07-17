@@ -1,5 +1,4 @@
 ﻿using DocumentDirectoryWeb.Helpers;
-using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -23,8 +22,56 @@ public class DocumentManagementController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        var documents = _context.Documents.Include(e => e.Category).ToList();
+        var documents = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
         return View(documents);
+    }
+    
+    [HttpGet]
+    public IActionResult GetSortedData(string sortBy, string sortDirection)
+    {
+        var data = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
+
+        data = sortBy switch
+        {
+            "name" => sortDirection == "asc"
+                ? data.OrderBy(item => item.Name)
+                : data.OrderByDescending(item => item.Name),
+            "category" => sortDirection == "asc"
+                ? data.OrderBy(item => item.Category)
+                : data.OrderByDescending(item => item.Category),
+            _ => data
+        };
+
+        return PartialView("_Table", data);
+    }
+    
+    [HttpPost]
+    [Authorize(Roles = "Admin, Editor")]
+    public IActionResult DeleteItem(string id)
+    {
+        var item = _context.Documents.FirstOrDefault(item => item.Id == id);
+        if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
+
+        // Удаляем файл
+        var pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{item.Id}.pdf");
+        System.IO.File.Delete(pdfFilePath);
+        
+        _context.Documents.Remove(item);
+        
+        var rowsAffected = _context.SaveChanges();
+        return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
+    }
+    
+    [HttpGet]
+    public IActionResult GetItem(string id)
+    {
+        var item = _context.Documents.FirstOrDefault(item => item.Id == id);
+        if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
+
+        ViewBag.Categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList();
+        ViewBag.Edit = true;
+
+        return PartialView("Form", item);
     }
 
     [HttpGet]
@@ -32,26 +79,32 @@ public class DocumentManagementController : Controller
     {
         var item = new Document();
 
-        ViewBag.Categories = _context.DocumentCategories.ToList();
+        ViewBag.Categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList();
         ViewBag.Edit = false;
 
         return PartialView("Form", item);
     }
 
     [HttpPost]
-    public IActionResult SaveItem(string name, int categoryId, IFormFile file, bool isEdit)
+    public IActionResult SaveItem(string id, string name, int categoryId, IFormFile? file, bool isEdit)
     {
-        // Генерируем GUID
-        var guid = Guid.NewGuid().ToString();
+        if (string.IsNullOrEmpty(name)) return StatusCode(StatusCodes.Status500InternalServerError);
+        
+        if (!isEdit)
+        {
+            // Генерируем GUID
+            id = Guid.NewGuid().ToString();
+        }
 
-        var isAdded = SaveFile(file, guid, out var errorMessage);
-        if (!isAdded) return StatusCode(StatusCodes.Status500InternalServerError, new { errorMessage });
-
-        // TODO: Проверка на корректность ввода
+        if (!isEdit || file != null)
+        {
+            var isAdded = SaveFile(file, id, out var errorMessage);
+            if (!isAdded) return StatusCode(StatusCodes.Status500InternalServerError, new { errorMessage });
+        }
 
         var item = new Document
         {
-            Id = guid,
+            Id = id,
             Name = name,
             CategoryId = categoryId
         };

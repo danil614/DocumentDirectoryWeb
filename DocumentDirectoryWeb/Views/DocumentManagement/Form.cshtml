@@ -13,9 +13,11 @@
         </div>
 
         <div class="modal-body">
+            <div id="formAlert" class="alert alert-danger" role="alert" style="display: none;">[TextContent]</div>
+            
             <form id="convertForm" enctype="multipart/form-data" method="post">
                 @Html.Hidden("Id", Model.Id)
-                @Html.Hidden("isEdit", isEdit)
+                @Html.Hidden("IsEdit", isEdit)
 
                 <div class="mb-3">
                     <label class="form-label" asp-for="Name"></label>
@@ -34,14 +36,14 @@
 
                 <div class="mb-3">
                     <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx">
-                    <div id="error" class="text-danger" style="display: none;">Разрешены только файлы PDF, DOC и DOCX.</div>
+                    <div id="errorFile" class="text-danger" style="display: none;">Разрешены только файлы PDF, DOC и DOCX.</div>
                 </div>
             </form>
         </div>
 
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
-            <button type="button" class="btn btn-primary" onclick="saveAndConvert()">Сохранить</button>
+            <button type="button" class="btn btn-primary" onclick="saveAndConvert()" id="saveButton">Сохранить</button>
         </div>
     </div>
 </div>
@@ -52,27 +54,16 @@
 
 <script>
     function saveAndConvert() {
-        // Получение значений из полей
-        const name = $('#Name').val();
-        const categoryId = $('#CategoryId').val();
-        const fileInput = $('#fileInput')[0];
-        const file = fileInput.files[0];
-        const filePath = fileInput.value;
+        $('#formAlert').hide();
+
+        let formData = getFormData();
         
-        const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
-          
-        if (!allowedExtensions.exec(filePath)) {
-            document.getElementById("error").style.display = "block";
+        if (!formData) {
             return;
         }
-    
-        // Создание объекта FormData для передачи данных формы
-        let formData = new FormData();
-        formData.append('name', name);
-        formData.append('categoryId', categoryId);
-        formData.append('file', file);
         
         $("#spinner").show();
+        disableButton();
     
         // Отправка данных на сервер с помощью AJAX
         $.ajax({
@@ -87,13 +78,72 @@
             // Закрываем окно, перезагружаем страницу
             $('#modalWindow').modal('hide');
             $("#spinner").hide();
+            enableButton();
             location.reload();
           },
           error: function (xhr, status, error) {
             // Обработка ошибки
             console.log('Error:', error);
+            $("#spinner").hide();
+            enableButton();
             alert("Произошла ошибка при загрузке данных.");
           }
         });
+    }
+    
+    function getFormData() {
+        // Получение значений из полей
+        const id = $('#Id').val();
+        const isEdit = convertToJSBool($('#IsEdit').val());
+        const name = $('#Name').val();
+        
+        if (!name) {
+            let formAlert = $('#formAlert');
+            formAlert.text('Поля неправильно заполнены!');
+            formAlert.show();
+            return null;
+        }
+        
+        const categoryId = $('#CategoryId').val();
+        const fileInput = $('#fileInput')[0];
+        const file = fileInput.files[0];
+        const filePath = fileInput.value;
+        
+        if (!isEdit && !file) {
+            $('#errorFile').show();
+            return null;
+        }
+        
+        const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+
+        if (file && !allowedExtensions.exec(filePath)) {
+            $('#errorFile').show();
+            return null;
+        }
+        
+        // Создание объекта FormData для передачи данных формы
+        let formData = new FormData();
+        formData.append('id', id);
+        formData.append('name', name);
+        formData.append('categoryId', categoryId);
+        formData.append('file', file);
+        formData.append('isEdit', isEdit);
+        
+        return formData;
+    }
+    
+    function disableButton() {
+        // Блокировка кнопки
+        document.getElementById("saveButton").setAttribute("disabled", "disabled");
+    }
+    
+    function enableButton() {
+        // Разблокировка кнопки
+        document.getElementById("saveButton").removeAttribute("disabled");
+    }
+    
+    function convertToJSBool(csharpBool) {
+        // Преобразование строки в нижний регистр и сравнение с "true"
+        return csharpBool.toLowerCase() === "true";
     }
 </script>
