@@ -10,7 +10,8 @@ public static class UserTabManager
         { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
         { "DocumentManagement", new TabItem("Управление документами", "DocumentManagement", "Index") },
         { "Categories", new TabItem("Разделы", "Categories", "Index") },
-        { "Users", new TabItem("Пользователи", "Users", "Index") }
+        { "Users", new TabItem("Пользователи", "Users", "Index") },
+        { "Departments", new TabItem("Подразделения", "Departments", "Index") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)
@@ -34,7 +35,9 @@ public static class UserTabManager
             case "Editor":
                 userTabs.AddRange(new[]
                 {
-                    Tabs["DocumentManagement"]
+                    Tabs["DocumentView"],
+                    Tabs["DocumentManagement"],
+                    Tabs["Categories"]
                 });
                 break;
             case "User":

@@ -1,0 +1,25 @@
+﻿@model IQueryable<Department>
+
+@{
+    const string controllerName = "Departments";
+}
+
+@foreach (var item in Model)
+{
+    <tr>
+        <td class="align-middle">@item.Name</td>
+        <td class="align-middle">
+            <button class="btn btn-secondary btn-sm" onclick="editItem('@controllerName', '@item.Id')"
+                    data-toggle="tooltip" data-placement="top" title="Редактировать">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+            @if (User.IsInRole("Admin"))
+            {
+                <button class="btn btn-danger btn-sm" onclick="deleteItem('@controllerName', '@item.Id')"
+                        data-toggle="tooltip" data-placement="top" title="Удалить">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                </button>
+            }
+        </td>
+    </tr>
+}
