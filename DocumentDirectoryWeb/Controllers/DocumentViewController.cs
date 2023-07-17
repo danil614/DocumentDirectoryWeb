@@ -43,6 +43,13 @@ public class DocumentViewController : Controller
     }
 
     [HttpGet]
+    public IActionResult GetCategories()
+    {
+        var categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList().AsQueryable();
+        return PartialView("_Categories", categories);
+    }
+
+    [HttpGet]
     public IActionResult GetDocumentsByCategory(int categoryId, string categoryName)
     {
         var random = new Random();

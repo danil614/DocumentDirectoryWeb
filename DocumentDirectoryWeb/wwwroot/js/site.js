@@ -6,6 +6,22 @@ function openDocument(pdfUrl) {
     $('#pdf-modal').modal('show');
 }
 
+// Функция отображения вкладок для документов.
+function showCategoryTabs() {
+    $.ajax({
+        url: "/DocumentView/GetCategories",
+        type: "GET",
+        success: function (response) {
+            const tabs = $('#categoryTabs');
+            tabs.html(response);
+        },
+        error: function (error) {
+            console.log(error);
+            alert("Произошла ошибка при загрузке данных.");
+        }
+    });
+}
+
 // Функция открытия модального окна.
 function openModal(url, id) {
     $.ajax({

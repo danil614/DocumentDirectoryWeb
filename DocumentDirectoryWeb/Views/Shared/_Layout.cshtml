@@ -1,5 +1,6 @@
 ﻿@using DocumentDirectoryWeb.Helpers
 @using Microsoft.AspNetCore.Mvc.TagHelpers
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -43,9 +44,13 @@
                     </li>
                 </ul>
             </div>
+            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1" id="categoryTabs"></ul>
+            </div>
         </div>
     </nav>
 </header>
+
 <div class="container">
     <main role="main" class="pb-3">
         @RenderBody()
@@ -63,6 +68,14 @@
 
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+    $(document).ready(function()
+    {
+        showCategoryTabs();
+    });
+</script>
+
 @await RenderSectionAsync("Scripts", false)
 </body>
 </html>
