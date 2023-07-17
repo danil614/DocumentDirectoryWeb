@@ -86,7 +86,7 @@ public class AccountController : Controller
         }
 
         // Если пользователь есть, то входим в систему
-        SignIn(user.Login, user.UserTypeId, user.FullName);
+        SignIn(user.Id, user.Login, user.UserTypeId, user.FullName);
         return RedirectToAction("Index", "Home");
     }
 
@@ -101,7 +101,7 @@ public class AccountController : Controller
 
         if (user.Login == _superUser.Username && user.Password == _superUser.Password)
         {
-            SignIn(_superUser.Username, 3, "Суперпользователь");
+            SignIn(_superUser.Username, _superUser.Username, 3, "Суперпользователь");
             return RedirectToAction("Index", "Home");
         }
 
@@ -116,14 +116,14 @@ public class AccountController : Controller
             return View(user);
         }
 
-        SignIn(item.Login, item.UserTypeId, item.FullName);
+        SignIn(item.Id, item.Login, item.UserTypeId, item.FullName);
         return RedirectToAction("Index", "Home");
     }
 
     /// <summary>
     ///     Осуществляет вход в систему с помощью Cookie.
     /// </summary>
-    private void SignIn(string login, int userTypeId, string fullName)
+    private void SignIn(string id, string login, int userTypeId, string fullName)
     {
         var userType = _context.UserTypes.FirstOrDefault(t => t.Id == userTypeId)?.SystemName ?? "User";
 
@@ -131,7 +131,8 @@ public class AccountController : Controller
         {
             new(ClaimsIdentity.DefaultNameClaimType, login),
             new(ClaimsIdentity.DefaultRoleClaimType, userType),
-            new(ClaimTypes.GivenName, fullName)
+            new(ClaimTypes.GivenName, fullName),
+            new(ClaimTypes.System, id)
         };
 
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme,
@@ -163,7 +164,7 @@ public class AccountController : Controller
 
             if (rowsAffected > 0)
             {
-                SignIn(user.Login, user.UserTypeId, user.FullName);
+                SignIn(user.Id, user.Login, user.UserTypeId, user.FullName);
                 return RedirectToAction("Index", "Home");
             }
         }

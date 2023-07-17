@@ -38,7 +38,7 @@ public class DocumentViewController : Controller
     }
 
     [HttpGet]
-    public IActionResult GetPdf(string fileId)
+    public IActionResult Document(string fileId)
     {
         // Создаем путь до файла
         var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");

@@ -24,7 +24,7 @@
             <td class="align-middle">@document.Name</td>
             <td class="align-middle">@document.Category</td>
             <td class="align-middle">
-                <button class="btn btn-primary" onclick="openDocument('@Url.Action("GetPdf", "DocumentView")' + '?fileId=' + '@document.Id')">
+                <button class="btn btn-primary" onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')">
                     Просмотр
                 </button>
             </td>

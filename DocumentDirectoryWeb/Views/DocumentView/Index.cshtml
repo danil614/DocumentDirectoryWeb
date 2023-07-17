@@ -24,7 +24,7 @@
             <td class="align-middle">@(document.ReviewDate.HasValue ? document.ReviewDate.Value.ToShortDateString() : "")</td>
             <td class="align-middle">
                 <button class="btn btn-primary"
-                        onclick="openDocument('@Url.Action("GetPdf", "DocumentView")' + '?fileId=' + '@document.Id')">
+                        onclick="openDocument('@Url.Action("Document", "DocumentView")' + '?fileId=' + '@document.Id')">
                     Просмотр
                 </button>
             </td>
