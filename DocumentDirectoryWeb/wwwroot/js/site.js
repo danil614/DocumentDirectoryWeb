@@ -51,7 +51,7 @@ function editItem(controllerName, id) {
 }
 
 // Функция для удаления записи по идентификатору.
-function deleteItem(controllerName, id) {
+function deleteItem(controllerName, id, reload = false) {
     if (confirm("Вы уверены, что хотите удалить эту запись?")) {
         $.ajax({
             url: '/' + controllerName + '/DeleteItem',
@@ -60,6 +60,9 @@ function deleteItem(controllerName, id) {
             success: function () {
                 refreshTableData(controllerName);
                 alert("Запись успешно удалена.");
+                if (reload) {
+                    location.reload(); // Перезагрузка страницы
+                }
             },
             error: function (error) {
                 console.log(error);
