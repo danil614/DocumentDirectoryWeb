@@ -20,9 +20,21 @@ public class DocumentManagementController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int? categoryId, string? categoryName)
     {
-        var documents = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
+        IQueryable<Document> documents;
+        
+        if (categoryId is null || categoryName is null)
+        {
+            documents = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
+        }
+        else
+        {
+            documents = _context.Documents.Include(e => e.Category)
+                .Where(e => e.CategoryId == categoryId).ToList().AsQueryable();
+            ViewBag.title = categoryName;
+        }
+        
         return View(documents);
     }
     

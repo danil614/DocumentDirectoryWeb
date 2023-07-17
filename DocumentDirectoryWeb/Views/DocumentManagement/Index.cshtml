@@ -1,7 +1,7 @@
 ﻿@model IQueryable<Document>
 
 @{
-    ViewData["Title"] = "Список документов";
+    ViewData["Title"] = ViewBag.title ?? "Управление документами";
     const string controllerName = "DocumentManagement";
 }
 

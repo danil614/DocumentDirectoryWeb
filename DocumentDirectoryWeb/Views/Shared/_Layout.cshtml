@@ -1,6 +1,4 @@
-﻿@using DocumentDirectoryWeb.Helpers
-@using Microsoft.AspNetCore.Mvc.TagHelpers
-
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -13,42 +11,10 @@
     <link rel="stylesheet" href="~/lib/font-awesome/css/font-awesome.min.css">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 </head>
+
 <body>
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    @foreach (var tab in UserTabManager.GetTabsForUserType(UserTabManager.GetUserType(User.Claims)))
-                    {
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="@tab.Controller" asp-action="@tab.Action">@tab.DisplayName</a>
-                        </li>
-                    }
-                </ul>
-
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        @if (User.Identity is not null && User.Identity.IsAuthenticated)
-                        {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Logout">Выход (@User.Identity.Name)</a>
-                        }
-                        else
-                        {
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Account" asp-action="Login">Войти</a>
-                        }
-                    </li>
-                </ul>
-            </div>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1" id="categoryTabs"></ul>
-            </div>
-        </div>
-    </nav>
+    @await Html.PartialAsync("_Navbar")
 </header>
 
 <div class="container">
@@ -69,12 +35,15 @@
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
 
-<script>
-    $(document).ready(function()
-    {
-        showCategoryTabs();
-    });
-</script>
+@if (User.Identity is not null && User.Identity.IsAuthenticated)
+{
+    <script>
+        $(document).ready(function()
+        {
+            showCategoryTabs();
+        });
+    </script>
+}
 
 @await RenderSectionAsync("Scripts", false)
 </body>

@@ -3,10 +3,20 @@
 @foreach (var category in Model)
 {
     <li class="nav-item">
-        <a class="nav-link text-dark" 
-           href="@Url.Action("GetDocumentsByCategory", "DocumentView", 
-                     new { categoryId = category.Id, categoryName = category.Name })">
-            @category.Name
-        </a>
+        @if (User.IsInRole("User"))
+        {
+            <a class="nav-link text-dark"
+               href="@Url.Action("GetDocumentsByCategory", "DocumentView", new { categoryId = category.Id, categoryName = category.Name })">
+                @category.Name
+            </a>
+        }
+
+        @if (User.IsInRole("Editor") || User.IsInRole("Admin"))
+        {
+            <a class="nav-link text-dark"
+               href="@Url.Action("Index", "DocumentManagement", new { categoryId = category.Id, categoryName = category.Name })">
+                @category.Name
+            </a>
+        }
     </li>
 }
