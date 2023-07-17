@@ -19,6 +19,12 @@ public static class UserTabManager
         var roleClaim = claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultRoleClaimType);
         return roleClaim?.Value;
     }
+    
+    public static string? GetUserId(IEnumerable<Claim> claims)
+    {
+        var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.System);
+        return idClaim?.Value;
+    }
 
     /// <summary>
     ///     Метод для формирования списка вкладок на основе UserType.

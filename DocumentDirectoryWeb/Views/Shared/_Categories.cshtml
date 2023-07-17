@@ -6,7 +6,7 @@
         @if (User.IsInRole("User"))
         {
             <a class="nav-link text-dark"
-               href="@Url.Action("GetDocumentsByCategory", "DocumentView", new { categoryId = category.Id, categoryName = category.Name })">
+               href="@Url.Action("Index", "DocumentView", new { categoryId = category.Id, categoryName = category.Name })">
                 @category.Name
             </a>
         }

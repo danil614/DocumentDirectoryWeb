@@ -44,7 +44,8 @@
             <td class="align-middle">
                 <button class="btn btn-primary btn-sm"
                         onclick="openDocument('@Url.Action("GetDocument", "DocumentView",
-                                                   new { id = item.DocumentId, name = Scripts.KeepLettersAndSpacesOnly(item.Name) })')"
+                                                   new { id = item.DocumentId, name = Scripts.KeepLettersAndSpacesOnly(item.Name) })',
+                                                   '@item.DocumentId', '@item.IsReviewed')"
                         data-toggle="tooltip" data-placement="top" title="Просмотр">
                     Просмотр
                 </button>

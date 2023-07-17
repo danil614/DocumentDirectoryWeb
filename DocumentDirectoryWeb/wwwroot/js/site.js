@@ -1,7 +1,10 @@
 ﻿// Открывает окно просмотра документа.
-function openDocument(pdfUrl) {
+function openDocument(pdfUrl, documentId, isReviewed) {
     const pdfIframe = document.getElementById('pdf-iframe');
     pdfIframe.src = pdfUrl;
+    
+    $('#document-id').val(documentId);
+    $('#agreement-checkbox').val(isReviewed);
 
     $('#pdf-modal').modal('show');
 }

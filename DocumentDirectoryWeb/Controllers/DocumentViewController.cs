@@ -19,27 +19,83 @@ public class DocumentViewController : Controller
     }
 
     [HttpGet]
-    public IActionResult Index()
+    public IActionResult Index(int? categoryId, string? categoryName)
     {
-        var random = new Random();
+        IQueryable<Document> documents;
+        
+        if (categoryId is null || categoryName is null)
+        {
+            documents = _context.Documents.Include(e => e.Category);
+            ViewBag.showCategory = true;
+        }
+        else
+        {
+            documents = _context.Documents.Include(e => e.Category)
+                .Where(d => d.CategoryId == categoryId);
+            ViewBag.title = categoryName;
+        }
 
-        var documents = _context.Documents.Include(e => e.Category).ToList()
-            .Select(e =>
+        var userId = UserTabManager.GetUserId(User.Claims);
+
+        var viewDocuments = documents.ToList().Select(e =>
+        {
+            var userDocumentReview =
+                _context.UserDocumentReviews.FirstOrDefault(r => r.DocumentId == e.Id && r.UserId == userId);
+            var isReviewed = false;
+            DateTime? reviewDate = null;
+            
+            if (userDocumentReview is not null)
             {
-                var isReviewed = random.Next(2) != 0;
-                return new DocumentView
-                {
-                    DocumentId = e.Id,
-                    Name = e.Name,
-                    IsReviewed = isReviewed,
-                    ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null,
-                    CategoryId = e.CategoryId,
-                    Category = e.Category
-                };
-            }).ToList();
+                isReviewed = userDocumentReview.IsReviewed;
+                reviewDate = userDocumentReview.ReviewDate;
+            }
+            
+            return new DocumentView
+            {
+                DocumentId = e.Id,
+                Name = e.Name,
+                IsReviewed = isReviewed,
+                ReviewDate = reviewDate,
+                CategoryId = e.CategoryId,
+                Category = e.Category
+            };
+        }).ToList();
+        
+        return View(viewDocuments);
+    }
 
-        ViewBag.showCategory = true;
-        return View(documents);
+    [HttpPost]
+    public IActionResult SaveReview(string documentId, bool isReviewed)
+    {
+        var userId = UserTabManager.GetUserId(User.Claims);
+        if (userId is null)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError);
+        }
+        
+        var userDocumentReview =
+            _context.UserDocumentReviews.FirstOrDefault(r => r.DocumentId == documentId && r.UserId == userId);
+        
+        if (userDocumentReview is null)
+        {
+            userDocumentReview = new UserDocumentReview
+            {
+                UserId = userId,
+                DocumentId = documentId,
+                IsReviewed = isReviewed,
+                ReviewDate = isReviewed ? DateTime.Now : null
+            };
+            _context.UserDocumentReviews.Add(userDocumentReview);
+        }
+        else
+        {
+            userDocumentReview.IsReviewed = isReviewed;
+            userDocumentReview.ReviewDate = isReviewed ? DateTime.Now : null;
+            _context.UserDocumentReviews.Update(userDocumentReview);
+        }
+        
+        var rowsAffected = _context.SaveChanges();
+        return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
     }
 
     [HttpGet]
@@ -47,31 +103,6 @@ public class DocumentViewController : Controller
     {
         var categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList().AsQueryable();
         return PartialView("_Categories", categories);
-    }
-
-    [HttpGet]
-    public IActionResult GetDocumentsByCategory(int categoryId, string categoryName)
-    {
-        var random = new Random();
-
-        var documents = _context.Documents.Include(e => e.Category)
-            .Where(d => d.CategoryId == categoryId).ToList()
-            .Select(e =>
-            {
-                var isReviewed = random.Next(2) != 0;
-                return new DocumentView
-                {
-                    DocumentId = e.Id,
-                    Name = e.Name,
-                    IsReviewed = isReviewed,
-                    ReviewDate = isReviewed ? DateTime.Now.AddDays(random.Next(-30, 30)) : null,
-                    CategoryId = e.CategoryId,
-                    Category = e.Category
-                };
-            }).ToList();
-
-        ViewBag.title = categoryName;
-        return View("Index", documents);
     }
 
     [HttpGet]

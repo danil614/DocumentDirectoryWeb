@@ -16,6 +16,7 @@ public class ApplicationContext : DbContext
     public DbSet<User> Users { get; set; } = null!;
     public DbSet<UserType> UserTypes { get; set; } = null!;
     public DbSet<Department> Departments { get; set; } = null!;
+    public DbSet<UserDocumentReview> UserDocumentReviews { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
