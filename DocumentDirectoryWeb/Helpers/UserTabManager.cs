@@ -7,11 +7,12 @@ public static class UserTabManager
     // Создание словаря вкладок
     private static readonly Dictionary<string, TabItem> Tabs = new()
     {
-        { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
         { "DocumentManagement", new TabItem("Управление документами", "DocumentManagement", "Index") },
+        { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
         { "Categories", new TabItem("Разделы", "Categories", "Index") },
         { "Users", new TabItem("Пользователи", "Users", "Index") },
-        { "Departments", new TabItem("Подразделения", "Departments", "Index") }
+        { "Departments", new TabItem("Подразделения", "Departments", "Index") },
+        { "ReportByUsers", new TabItem("Отчет по пользователям", "Reports", "ListByUsers") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)
@@ -41,9 +42,10 @@ public static class UserTabManager
             case "Editor":
                 userTabs.AddRange(new[]
                 {
-                    Tabs["DocumentView"],
                     Tabs["DocumentManagement"],
-                    Tabs["Categories"]
+                    Tabs["DocumentView"],
+                    Tabs["Categories"],
+                    Tabs["ReportByUsers"]
                 });
                 break;
             case "User":

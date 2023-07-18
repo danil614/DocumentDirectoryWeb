@@ -22,6 +22,11 @@
 
 <script>
     $(document).ready(function() {
+        const pdfModal = document.getElementById('pdf-modal')
+        pdfModal.addEventListener('hide.bs.modal', event => {
+            location.reload(); // Перезагрузка страницы
+        });
+        
         $('#agreement-checkbox').change(function() {
             const documentId = $('#document-id').val();
             const isReviewed = $(this).is(':checked');

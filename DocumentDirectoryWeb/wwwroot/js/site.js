@@ -4,7 +4,7 @@ function openDocument(pdfUrl, documentId, isReviewed) {
     pdfIframe.src = pdfUrl;
     
     $('#document-id').val(documentId);
-    $('#agreement-checkbox').val(isReviewed);
+    $('#agreement-checkbox').prop("checked", convertToJSBool(isReviewed));
 
     $('#pdf-modal').modal('show');
 }
@@ -198,4 +198,12 @@ function checkUnique(controllerName, excludedFields = []) {
             alert("Произошла ошибка при отправке данных.");
         }
     });
+}
+
+// Функция для конвертации bool.
+function convertToJSBool(csharpBool) {
+    if (!csharpBool) return false;
+    
+    // Преобразование строки в нижний регистр и сравнение с "true"
+    return csharpBool.toLowerCase() === "true";
 }

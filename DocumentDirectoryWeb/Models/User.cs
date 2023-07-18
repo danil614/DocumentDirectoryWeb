@@ -31,4 +31,10 @@ public class User
     [Required(ErrorMessage = "Поле является обязательным.")]
     [Display(Name = "Подразделение")]
     public int DepartmentId { get; set; }
+    public virtual List<UserDocumentReview>? UserDocumentReviews { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return $"{FullName} ({Login}), {Department}";
+    }
 }
