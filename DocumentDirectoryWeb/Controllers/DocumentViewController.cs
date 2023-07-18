@@ -22,7 +22,7 @@ public class DocumentViewController : Controller
     public IActionResult Index(int? categoryId, string? categoryName)
     {
         IQueryable<Document> documents;
-        
+
         if (categoryId is null || categoryName is null)
         {
             documents = _context.Documents.Include(e => e.Category);
@@ -43,13 +43,13 @@ public class DocumentViewController : Controller
                 _context.UserDocumentReviews.FirstOrDefault(r => r.DocumentId == e.Id && r.UserId == userId);
             var isReviewed = false;
             DateTime? reviewDate = null;
-            
+
             if (userDocumentReview is not null)
             {
                 isReviewed = userDocumentReview.IsReviewed;
                 reviewDate = userDocumentReview.ReviewDate;
             }
-            
+
             return new DocumentView
             {
                 DocumentId = e.Id,
@@ -60,7 +60,7 @@ public class DocumentViewController : Controller
                 Category = e.Category
             };
         }).ToList();
-        
+
         return View(viewDocuments);
     }
 
@@ -68,14 +68,11 @@ public class DocumentViewController : Controller
     public IActionResult SaveReview(string documentId, bool isReviewed)
     {
         var userId = UserTabManager.GetUserId(User.Claims);
-        if (userId is null)
-        {
-            return StatusCode(StatusCodes.Status500InternalServerError);
-        }
-        
+        if (userId is null) return StatusCode(StatusCodes.Status500InternalServerError);
+
         var userDocumentReview =
             _context.UserDocumentReviews.FirstOrDefault(r => r.DocumentId == documentId && r.UserId == userId);
-        
+
         if (userDocumentReview is null)
         {
             userDocumentReview = new UserDocumentReview
@@ -93,7 +90,7 @@ public class DocumentViewController : Controller
             userDocumentReview.ReviewDate = isReviewed ? DateTime.Now : null;
             _context.UserDocumentReviews.Update(userDocumentReview);
         }
-        
+
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
     }

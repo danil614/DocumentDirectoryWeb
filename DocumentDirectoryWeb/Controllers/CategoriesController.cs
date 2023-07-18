@@ -45,7 +45,7 @@ public class CategoriesController : Controller
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
         _context.DocumentCategories.Remove(item);
-        
+
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
     }

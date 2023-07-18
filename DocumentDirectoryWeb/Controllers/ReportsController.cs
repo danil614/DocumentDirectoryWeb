@@ -25,4 +25,15 @@ public class ReportsController : Controller
 
         return View(users);
     }
+
+    [HttpGet]
+    public IActionResult ListByDocuments()
+    {
+        var documents = _context.Documents.Include(d => d.Category)
+            .Include(d => d.UserDocumentReviews)!.ThenInclude(r => r.User)
+            .ThenInclude(u => u!.Department)
+            .OrderBy(d => d.Category).ThenBy(d => d.Name).ToList().AsQueryable();
+
+        return View(documents);
+    }
 }

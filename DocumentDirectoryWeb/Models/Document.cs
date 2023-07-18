@@ -15,4 +15,6 @@ public class Document
     public int CategoryId { get; set; }
 
     [Display(Name = "Раздел")] public virtual DocumentCategory? Category { get; set; }
+
+    public virtual List<UserDocumentReview>? UserDocumentReviews { get; set; } = null!;
 }

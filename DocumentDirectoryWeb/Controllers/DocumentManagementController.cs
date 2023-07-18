@@ -23,7 +23,7 @@ public class DocumentManagementController : Controller
     public IActionResult Index(int? categoryId, string? categoryName)
     {
         IQueryable<Document> documents;
-        
+
         if (categoryId is null || categoryName is null)
         {
             documents = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
@@ -34,10 +34,10 @@ public class DocumentManagementController : Controller
                 .Where(e => e.CategoryId == categoryId).ToList().AsQueryable();
             ViewBag.title = categoryName;
         }
-        
+
         return View(documents);
     }
-    
+
     [HttpGet]
     public IActionResult GetSortedData(string sortBy, string sortDirection)
     {
@@ -56,7 +56,7 @@ public class DocumentManagementController : Controller
 
         return PartialView("_Table", data);
     }
-    
+
     [HttpPost]
     [Authorize(Roles = "Admin, Editor")]
     public IActionResult DeleteItem(string id)
@@ -67,13 +67,13 @@ public class DocumentManagementController : Controller
         // Удаляем файл
         var pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{item.Id}.pdf");
         System.IO.File.Delete(pdfFilePath);
-        
+
         _context.Documents.Remove(item);
-        
+
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
     }
-    
+
     [HttpGet]
     public IActionResult GetItem(string id)
     {
@@ -101,12 +101,10 @@ public class DocumentManagementController : Controller
     public IActionResult SaveItem(string id, string name, int categoryId, IFormFile? file, bool isEdit)
     {
         if (string.IsNullOrEmpty(name)) return StatusCode(StatusCodes.Status500InternalServerError);
-        
+
         if (!isEdit)
-        {
             // Генерируем GUID
             id = Guid.NewGuid().ToString();
-        }
 
         if (!isEdit || file != null)
         {

@@ -12,7 +12,8 @@ public static class UserTabManager
         { "Categories", new TabItem("Разделы", "Categories", "Index") },
         { "Users", new TabItem("Пользователи", "Users", "Index") },
         { "Departments", new TabItem("Подразделения", "Departments", "Index") },
-        { "ReportByUsers", new TabItem("Отчет по пользователям", "Reports", "ListByUsers") }
+        { "ReportByUsers", new TabItem("Отчет по пользователям", "Reports", "ListByUsers") },
+        { "ReportByDocuments", new TabItem("Отчет по документам", "Reports", "ListByDocuments") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)
@@ -20,7 +21,7 @@ public static class UserTabManager
         var roleClaim = claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultRoleClaimType);
         return roleClaim?.Value;
     }
-    
+
     public static string? GetUserId(IEnumerable<Claim> claims)
     {
         var idClaim = claims.FirstOrDefault(c => c.Type == ClaimTypes.System);
@@ -45,7 +46,8 @@ public static class UserTabManager
                     Tabs["DocumentManagement"],
                     Tabs["DocumentView"],
                     Tabs["Categories"],
-                    Tabs["ReportByUsers"]
+                    Tabs["ReportByUsers"],
+                    Tabs["ReportByDocuments"]
                 });
                 break;
             case "User":

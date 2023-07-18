@@ -14,15 +14,15 @@ public class UserType : IComparable<UserType>
     [Display(Name = "Системное имя")]
     public string SystemName { get; set; } = null!;
 
-    public override string ToString()
-    {
-        return Name;
-    }
-
     public int CompareTo(UserType? other)
     {
         if (ReferenceEquals(this, other)) return 0;
         if (ReferenceEquals(null, other)) return 1;
         return string.Compare(Name, other.Name, StringComparison.Ordinal);
+    }
+
+    public override string ToString()
+    {
+        return Name;
     }
 }

@@ -60,7 +60,7 @@ public class UsersController : Controller
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
         _context.Users.Remove(item);
-        
+
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
     }
@@ -70,7 +70,7 @@ public class UsersController : Controller
     {
         var item = _context.Users.FirstOrDefault(item => item.Id == id);
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
-        
+
         ViewBag.Edit = true;
         ViewBag.UserTypes = _context.UserTypes.OrderBy(t => t.Name).ToList();
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
@@ -85,7 +85,7 @@ public class UsersController : Controller
         {
             Id = Guid.NewGuid().ToString()
         };
-        
+
         ViewBag.Edit = false;
 
         ViewBag.UserTypes = _context.UserTypes.OrderBy(t => t.Name).ToList();
@@ -99,10 +99,7 @@ public class UsersController : Controller
     {
         if (ModelState.IsValid)
         {
-            if (!string.IsNullOrEmpty(item.Password))
-            {
-                item.Password = HashPassword.GetHash(item.Password);
-            }
+            if (!string.IsNullOrEmpty(item.Password)) item.Password = HashPassword.GetHash(item.Password);
 
             if (isEdit)
                 _context.Users.Update(item);
@@ -125,11 +122,11 @@ public class UsersController : Controller
     public IActionResult CheckUnique([FromBody] User? item)
     {
         if (item == null) return Json(new { isUnique = true, isValid = false });
-        
+
         var isUnique = !_context.Users.Any(source =>
             source.Id != item.Id &&
             source.Login == item.Login);
-        
+
         return Json(new { isUnique, isValid = ModelState.IsValid });
     }
 }

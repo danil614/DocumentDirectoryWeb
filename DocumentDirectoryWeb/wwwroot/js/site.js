@@ -2,7 +2,7 @@
 function openDocument(pdfUrl, documentId, isReviewed) {
     const pdfIframe = document.getElementById('pdf-iframe');
     pdfIframe.src = pdfUrl;
-    
+
     $('#document-id').val(documentId);
     $('#agreement-checkbox').prop("checked", convertToJSBool(isReviewed));
 
@@ -203,7 +203,7 @@ function checkUnique(controllerName, excludedFields = []) {
 // Функция для конвертации bool.
 function convertToJSBool(csharpBool) {
     if (!csharpBool) return false;
-    
+
     // Преобразование строки в нижний регистр и сравнение с "true"
     return csharpBool.toLowerCase() === "true";
 }

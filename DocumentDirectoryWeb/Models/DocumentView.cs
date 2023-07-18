@@ -6,6 +6,6 @@ public class DocumentView
     public string Name { get; set; } = null!;
     public bool IsReviewed { get; set; }
     public DateTime? ReviewDate { get; set; }
-    public int CategoryId { get; set; } 
+    public int CategoryId { get; set; }
     public virtual DocumentCategory? Category { get; set; }
 }

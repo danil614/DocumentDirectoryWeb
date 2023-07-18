@@ -10,15 +10,15 @@ public class Department : IComparable<Department>
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
 
-    public override string ToString()
-    {
-        return Name;
-    }
-    
     public int CompareTo(Department? other)
     {
         if (ReferenceEquals(this, other)) return 0;
         if (ReferenceEquals(null, other)) return 1;
         return string.Compare(Name, other.Name, StringComparison.Ordinal);
+    }
+
+    public override string ToString()
+    {
+        return Name;
     }
 }
