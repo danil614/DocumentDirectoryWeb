@@ -11,9 +11,7 @@ public static class UserTabManager
         { "DocumentView", new TabItem("Просмотр документов", "DocumentView", "Index") },
         { "Categories", new TabItem("Разделы", "Categories", "Index") },
         { "Users", new TabItem("Пользователи", "Users", "Index") },
-        { "Departments", new TabItem("Подразделения", "Departments", "Index") },
-        { "ReportByUsers", new TabItem("Отчет по пользователям", "Reports", "ListByUsers") },
-        { "ReportByDocuments", new TabItem("Отчет по документам", "Reports", "ListByDocuments") }
+        { "Departments", new TabItem("Подразделения", "Departments", "Index") }
     };
 
     public static string? GetUserType(IEnumerable<Claim> claims)
@@ -45,9 +43,7 @@ public static class UserTabManager
                 {
                     Tabs["DocumentManagement"],
                     Tabs["DocumentView"],
-                    Tabs["Categories"],
-                    Tabs["ReportByUsers"],
-                    Tabs["ReportByDocuments"]
+                    Tabs["Categories"]
                 });
                 break;
             case "User":

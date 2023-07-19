@@ -1,9 +1,8 @@
 ﻿using DocumentDirectoryWeb.Helpers;
+using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Office.Interop.Word;
-using Document = DocumentDirectoryWeb.Models.Document;
 
 namespace DocumentDirectoryWeb.Controllers;
 
@@ -135,31 +134,31 @@ public class DocumentManagementController : Controller
             message = "Файл не найден.";
             return false;
         }
+        
+        // Получаем расширение файла
+        var extension = Path.GetExtension(file.FileName);
+        string originalFilePath;
+        message = null;
+        var isPdf = extension is ".pdf";
+
+        if (isPdf)
+        {
+            originalFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
+        }
+        else if (extension is ".docx")
+        {
+            // Формируем имя файла с использованием GUID
+            var fileName = fileId + extension;
+            originalFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", fileName);
+        }
+        else
+        {
+            message = "Произошла ошибка: разрешены только файлы PDF и DOCX.";
+            return false;
+        }
 
         try
         {
-            // Получаем расширение файла
-            var extension = Path.GetExtension(file.FileName);
-            string originalFilePath;
-            message = null;
-            var isPdf = extension is ".pdf";
-
-            if (isPdf)
-            {
-                originalFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
-            }
-            else if (extension is ".doc" or ".docx")
-            {
-                // Формируем имя файла с использованием GUID
-                var fileName = fileId + extension;
-                originalFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", fileName);
-            }
-            else
-            {
-                message = "Произошла ошибка: разрешены только файлы PDF, DOC и DOCX.";
-                return false;
-            }
-
             using (var stream = new FileStream(originalFilePath, FileMode.Create))
             {
                 file.CopyTo(stream);
@@ -168,10 +167,9 @@ public class DocumentManagementController : Controller
             // Если файл pdf, его не нужно преобразовывать
             if (isPdf) return true;
 
-            // Иначе преобразовываем doc/docx в pdf
+            // Иначе преобразовываем docx в pdf
             var pdfFilePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{fileId}.pdf");
-            ConvertToPdf(originalFilePath, pdfFilePath);
-            System.IO.File.Delete(originalFilePath);
+            Converter.DocxToPdf(originalFilePath, pdfFilePath);
 
             return true;
         }
@@ -181,16 +179,12 @@ public class DocumentManagementController : Controller
             message = $"Произошла ошибка: {ex.Message}";
             return false;
         }
-    }
-
-    private static void ConvertToPdf(string originalFilePath, string pdfFilePath)
-    {
-        var wordApplication = new Application();
-        var wordDocument = wordApplication.Documents.Open(originalFilePath);
-
-        wordDocument.SaveAs(pdfFilePath, WdSaveFormat.wdFormatPDF);
-
-        wordDocument.Close();
-        wordApplication.Quit();
+        finally
+        {
+            if (!isPdf)
+            {
+                System.IO.File.Delete(originalFilePath);
+            }
+        }
     }
 }

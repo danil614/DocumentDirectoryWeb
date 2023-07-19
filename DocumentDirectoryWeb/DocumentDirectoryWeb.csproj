@@ -11,13 +11,10 @@
     </ItemGroup>
 
     <ItemGroup>
+        <PackageReference Include="HtmlRendererCore.PdfSharp" Version="1.0.5" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.8" />
-    </ItemGroup>
-
-    <ItemGroup>
-        <Reference Include="Interop.Microsoft.Office.Interop.Word">
-            <HintPath>Interop.Microsoft.Office.Interop.Word.dll</HintPath>
-        </Reference>
+        <PackageReference Include="OpenXmlPowerTools.NetStandard" Version="4.6.0" />
+        <PackageReference Include="PdfSharpCore" Version="1.3.57" />
     </ItemGroup>
 
 </Project>

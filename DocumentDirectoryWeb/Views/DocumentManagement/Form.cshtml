@@ -35,8 +35,8 @@
                 </div>
 
                 <div class="mb-3">
-                    <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.doc,.docx">
-                    <div id="errorFile" class="text-danger" style="display: none;">Разрешены только файлы PDF, DOC и DOCX.</div>
+                    <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.docx">
+                    <div id="errorFile" class="text-danger" style="display: none;">Разрешены только файлы PDF и DOCX.</div>
                 </div>
             </form>
         </div>
@@ -114,7 +114,7 @@
             return null;
         }
         
-        const allowedExtensions = /(\.pdf|\.doc|\.docx)$/i;
+        const allowedExtensions = /(\.pdf|\.docx)$/i;
 
         if (file && !allowedExtensions.exec(filePath)) {
             $('#errorFile').show();
