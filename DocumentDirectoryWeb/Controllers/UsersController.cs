@@ -72,6 +72,7 @@ public class UsersController : Controller
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
         ViewBag.Edit = true;
+        ViewBag.OldPassword = item.Password;
         ViewBag.UserTypes = _context.UserTypes.OrderBy(t => t.Name).ToList();
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
 
@@ -87,7 +88,6 @@ public class UsersController : Controller
         };
 
         ViewBag.Edit = false;
-
         ViewBag.UserTypes = _context.UserTypes.OrderBy(t => t.Name).ToList();
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
 
@@ -95,16 +95,24 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    public IActionResult SaveItem(User item, bool isEdit)
+    public IActionResult SaveItem(User item, bool isEdit, string oldPassword)
     {
         if (ModelState.IsValid)
         {
-            if (!string.IsNullOrEmpty(item.Password)) item.Password = HashPassword.GetHash(item.Password);
+            if (isEdit) // Если редактирование пользователя
+            {
+                if (item.Password != oldPassword) // Если пароль изменился, то хешируем его.
+                {
+                    item.Password = HashPassword.GetHash(item.Password);
+                }
 
-            if (isEdit)
                 _context.Users.Update(item);
+            }
             else
+            {
+                item.Password = HashPassword.GetHash(item.Password);
                 _context.Users.Add(item);
+            }
 
             var rowsAffected = _context.SaveChanges();
             return rowsAffected > 0 ? RedirectToAction("Index") : StatusCode(StatusCodes.Status500InternalServerError);
@@ -119,6 +127,7 @@ public class UsersController : Controller
     }
 
     [HttpPost]
+    [AllowAnonymous]
     public IActionResult CheckUnique([FromBody] User? item)
     {
         if (item == null) return Json(new { isUnique = true, isValid = false });

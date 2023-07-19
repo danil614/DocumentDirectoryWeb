@@ -20,7 +20,6 @@ function showCategoryTabs() {
         },
         error: function (error) {
             console.log(error);
-            alert("Произошла ошибка при загрузке данных.");
         }
     });
 }

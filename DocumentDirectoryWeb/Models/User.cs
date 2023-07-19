@@ -12,9 +12,10 @@ public class User
     [Display(Name = "Имя пользователя")]
     public string Login { get; set; } = null!;
 
+    [Required(ErrorMessage = "Поле является обязательным.")]
     [DataType(DataType.Password)]
     [Display(Name = "Пароль")]
-    public string? Password { get; set; }
+    public string Password { get; set; } = null!;
 
     [Display(Name = "Тип пользователя")] public virtual UserType? UserType { get; set; }
 

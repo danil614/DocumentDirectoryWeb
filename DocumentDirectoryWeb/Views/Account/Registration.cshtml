@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model User
+﻿@model User
 
 @{
     ViewData["Title"] = "Регистрация";
@@ -17,20 +16,16 @@
             </div>
         }
 
+        <div id="formAlert" class="alert alert-danger" role="alert" style="display: none;">[TextContent]</div>
+
         @using (Html.BeginForm("Register", "Account", FormMethod.Post))
         {
             @Html.ValidationSummary(true)
             @Html.Hidden("Id", Model.Id)
 
             <div class="mb-3">
-                <label class="form-label" asp-for="Login"></label>
-                <input class="form-control" asp-for="Login" readonly/>
-                <span class="text-danger" asp-validation-for="Login"></span>
-            </div>
-
-            <div class="mb-3">
                 <label class="form-label" asp-for="FullName"></label>
-                <input class="form-control" asp-for="FullName"/>
+                <input class="form-control" asp-for="FullName" oninput="generateLogin()"/>
                 <span class="text-danger" asp-validation-for="FullName"></span>
             </div>
 
@@ -42,6 +37,18 @@
                     new { @class = "form-select" })
                 <span class="text-danger" asp-validation-for="DepartmentId"></span>
             </div>
+            
+            <div class="mb-3">
+                <label class="form-label" asp-for="Login"></label>
+                <input class="form-control" asp-for="Login"/>
+                <span class="text-danger" asp-validation-for="Login"></span>
+            </div>
+            
+            <div class="mb-3">
+                <label class="form-label" asp-for="Password"></label>
+                <input class="form-control" asp-for="Password"/>
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
 
             <div class="mb-3 text-end">
                 <button class="btn btn-primary" type="submit">Зарегистрироваться</button>
@@ -50,3 +57,30 @@
     </div>
     <div class="col"></div>
 </div>
+
+@await Html.PartialAsync("_ValidationScriptsPartial")
+
+<script>
+    $(document).ready(function () {
+        $('form').submit(function (event) {
+            event.preventDefault();
+            checkUnique('Users');
+        });
+    });
+    
+    function generateLogin() {
+        const fullName = document.getElementById('FullName').value; // Получение значения из поля FullName
+        const names = fullName.split(' '); // Разделение полного имени на отдельные части
+        
+        let login = '';
+        for (let i = 0; i < names.length; i++) {
+            if (i === 0) {
+                login += names[i]; // Добавление фамилии без пробела
+            } else {
+                login += names[i].charAt(0).toUpperCase(); // Добавление первой буквы имени и отображение ее в верхнем регистре
+            }
+        }
+        
+        document.getElementById('Login').value = login; // Установка значения в поле Login
+    }
+</script>

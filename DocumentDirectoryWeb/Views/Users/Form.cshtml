@@ -2,6 +2,7 @@
 
 @{
     bool isEdit = ViewBag.Edit;
+    string oldPassword = ViewBag.OldPassword ?? "";
     ViewData["Title"] = (isEdit ? "Редактирование" : "Создание") + " пользователя";
     const string controllerName = "Users";
 }
@@ -20,6 +21,7 @@
                 @Html.ValidationSummary(true)
                 @Html.Hidden("Id", Model.Id)
                 @Html.Hidden("isEdit", isEdit)
+                @Html.Hidden("oldPassword", oldPassword)
 
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-3" asp-for="Login"></label>
@@ -80,10 +82,12 @@
     </div>
 </div>
 
-@await Html.PartialAsync("_ValidationScriptsPartial");
+@await Html.PartialAsync("_ValidationScriptsPartial")
 
 <script>
     $(document).ready(function () {
+        document.getElementById('Password').value = document.getElementById('oldPassword').value;
+
         $('form').submit(function (event) {
             event.preventDefault();
             checkUnique('@controllerName');

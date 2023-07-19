@@ -32,62 +32,16 @@ public class AccountController : Controller
         return View("Login");
     }
 
-    /// <summary>
-    ///     Получает Sid и имя пользователя Windows.
-    /// </summary>
-    private void GetWindowsUser(out string? username, out string? userSid)
-    {
-        username = null;
-        userSid = null;
-
-        try
-        {
-            if (User.Identity is null) return;
-
-            // Получение имени пользователя
-            username = User.Identity.Name?.Split(@"\")[1];
-
-            // Получение ключа пользователя
-            userSid = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.PrimarySid)?.Value;
-        }
-        catch (Exception e)
-        {
-            Console.WriteLine(e);
-        }
-    }
-
     [HttpPost]
-    public IActionResult WindowsLogin()
+    public IActionResult Registration()
     {
-        // Получаем имя пользователя и ключ Windows
-        GetWindowsUser(out var username, out var userSid);
-
-        // Если не удалось получить, то выводим ошибку
-        if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(userSid))
+        var user = new User
         {
-            ViewBag.ErrorText = "Вход возможен только с использованием логина и пароля!";
-            return View("Login");
-        }
+            Id = Guid.NewGuid().ToString()
+        };
 
-        // Получаем пользователя из базы данных
-        var user = _context.Users.FirstOrDefault(u => u.Id == userSid);
-
-        // Если пользователя нет, отправляем на регистрацию
-        if (user is null)
-        {
-            user = new User
-            {
-                Id = userSid,
-                Login = username
-            };
-
-            ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
-            return View("Registration", user);
-        }
-
-        // Если пользователь есть, то входим в систему
-        SignIn(user.Id, user.Login, user.UserTypeId, user.FullName);
-        return RedirectToAction("Index", "Home");
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
+        return View(user);
     }
 
     [HttpPost]
@@ -148,17 +102,9 @@ public class AccountController : Controller
     {
         if (ModelState.IsValid)
         {
-            var isFound = _context.Users.Any(u => u.Id == user.Id);
-
-            if (isFound)
-            {
-                _context.Users.Update(user);
-            }
-            else
-            {
-                user.UserTypeId = 1; // Обычный пользователь
-                _context.Users.Add(user);
-            }
+            user.UserTypeId = 1; // Обычный пользователь
+            user.Password = HashPassword.GetHash(user.Password);
+            _context.Users.Add(user);
 
             var rowsAffected = _context.SaveChanges();
 
@@ -169,8 +115,7 @@ public class AccountController : Controller
             }
         }
 
-
-        ViewBag.ErrorText = "Ошибка регистрации!";
+        ViewBag.ErrorText = "Ошибка при регистрации. Поля неправильно заполнены!";
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
         return View("Registration", user);
     }

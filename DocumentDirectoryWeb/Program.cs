@@ -25,7 +25,7 @@ builder.Services.AddDbContext<ApplicationContext>(options =>
     if (connection != null) options.UseSqlite(connection);
 });
 
-// Аутентификация с помощью куки
+// Аутентификация с помощью Cookie
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
