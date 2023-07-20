@@ -20,7 +20,7 @@ public class ReportsController : Controller
     {
         var users = _context.Users.Include(u => u.Department)
             .Include(u => u.UserDocumentReviews)!.ThenInclude(r => r.Document)
-            .ThenInclude(d => d!.Category)
+            .ThenInclude(d => d!.Categories)
             .OrderBy(u => u.FullName).ToList().AsQueryable();
 
         return View(users);
@@ -29,10 +29,10 @@ public class ReportsController : Controller
     [HttpGet]
     public IActionResult ListByDocuments()
     {
-        var documents = _context.Documents.Include(d => d.Category)
+        var documents = _context.Documents.Include(d => d.Categories)
             .Include(d => d.UserDocumentReviews)!.ThenInclude(r => r.User)
             .ThenInclude(u => u!.Department)
-            .OrderBy(d => d.Category).ThenBy(d => d.Name).ToList().AsQueryable();
+            .OrderBy(d => d.Name).ToList().AsQueryable();
 
         return View(documents);
     }

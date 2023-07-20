@@ -18,13 +18,13 @@ public class CategoriesController : Controller
     [HttpGet]
     public IActionResult Index()
     {
-        return View(_context.DocumentCategories.OrderBy(item => item.Name).ToList().AsQueryable());
+        return View(_context.Categories.OrderBy(item => item.Name).ToList().AsQueryable());
     }
 
     [HttpGet]
     public IActionResult GetSortedData(string sortBy, string sortDirection)
     {
-        var data = _context.DocumentCategories.ToList().AsQueryable();
+        var data = _context.Categories.ToList().AsQueryable();
 
         data = sortBy switch
         {
@@ -41,10 +41,10 @@ public class CategoriesController : Controller
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteItem(int id)
     {
-        var item = _context.DocumentCategories.FirstOrDefault(item => item.Id == id);
+        var item = _context.Categories.FirstOrDefault(item => item.Id == id);
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
-        _context.DocumentCategories.Remove(item);
+        _context.Categories.Remove(item);
 
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
@@ -53,7 +53,7 @@ public class CategoriesController : Controller
     [HttpGet]
     public IActionResult GetItem(int id)
     {
-        var item = _context.DocumentCategories.FirstOrDefault(item => item.Id == id);
+        var item = _context.Categories.FirstOrDefault(item => item.Id == id);
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
         ViewBag.Edit = true;
@@ -64,18 +64,18 @@ public class CategoriesController : Controller
     [HttpGet]
     public IActionResult CreateItem()
     {
-        var item = new DocumentCategory();
+        var item = new Category();
         ViewBag.Edit = false;
 
         return PartialView("Form", item);
     }
 
     [HttpPost]
-    public IActionResult SaveItem(DocumentCategory item)
+    public IActionResult SaveItem(Category item)
     {
         if (ModelState.IsValid)
         {
-            _context.DocumentCategories.Update(item);
+            _context.Categories.Update(item);
             var rowsAffected = _context.SaveChanges();
             return rowsAffected > 0 ? RedirectToAction("Index") : StatusCode(StatusCodes.Status500InternalServerError);
         }
@@ -89,11 +89,11 @@ public class CategoriesController : Controller
     }
 
     [HttpPost]
-    public IActionResult CheckUnique([FromBody] DocumentCategory? item)
+    public IActionResult CheckUnique([FromBody] Category? item)
     {
         if (item == null) return Json(new { isUnique = true, isValid = false });
 
-        var isUnique = !_context.DocumentCategories.Any(source =>
+        var isUnique = !_context.Categories.Any(source =>
             source.Id != item.Id &&
             source.Name == item.Name);
 

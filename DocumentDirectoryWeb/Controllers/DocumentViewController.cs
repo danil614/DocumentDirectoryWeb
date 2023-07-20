@@ -21,19 +21,23 @@ public class DocumentViewController : Controller
     [HttpGet]
     public IActionResult Index(int? categoryId, string? categoryName)
     {
-        IQueryable<Document> documents;
+        IQueryable<Document>? documents;
 
         if (categoryId is null || categoryName is null)
         {
-            documents = _context.Documents.Include(e => e.Category);
+            documents = _context.Documents.Include(d => d.Categories)
+                .OrderBy(d => d.Name).ToList().AsQueryable();
             ViewBag.showCategory = true;
         }
         else
         {
-            documents = _context.Documents.Include(e => e.Category)
-                .Where(d => d.CategoryId == categoryId);
+            documents = _context.Categories.Include(c => c.Documents)
+                .FirstOrDefault(c => c.Id == categoryId)?.Documents?.OrderBy(d => d.Name)
+                .ToList().AsQueryable();
             ViewBag.title = categoryName;
         }
+
+        if (documents is null) return View();
 
         var userId = UserTabManager.GetUserId(User.Claims);
 
@@ -56,8 +60,7 @@ public class DocumentViewController : Controller
                 Name = e.Name,
                 IsReviewed = isReviewed,
                 ReviewDate = reviewDate,
-                CategoryId = e.CategoryId,
-                Category = e.Category
+                Categories = e.GetCategories()
             };
         }).ToList();
 
@@ -98,7 +101,7 @@ public class DocumentViewController : Controller
     [HttpGet]
     public IActionResult GetCategories()
     {
-        var categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList().AsQueryable();
+        var categories = _context.Categories.OrderBy(d => d.Name).ToList().AsQueryable();
         return PartialView("_Categories", categories);
     }
 

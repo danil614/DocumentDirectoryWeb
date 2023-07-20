@@ -4,7 +4,7 @@ function openDocument(pdfUrl, documentId, isReviewed) {
     pdfIframe.src = pdfUrl;
 
     $('#document-id').val(documentId);
-    $('#agreement-checkbox').prop("checked", convertToJSBool(isReviewed));
+    $('#agreement-checkbox').prop("checked", isReviewed);
 
     $('#pdf-modal').modal('show');
 }

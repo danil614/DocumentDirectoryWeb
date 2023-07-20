@@ -37,14 +37,14 @@
             <td class="align-middle">@item.Name</td>
             @if (showCategory)
             {
-                <td class="align-middle">@item.Category</td>
+                <td class="align-middle">@item.Categories</td>
             }
             <td class="align-middle">@(item.IsReviewed ? "Да" : "Нет")</td>
             <td class="align-middle">@(item.ReviewDate.HasValue ? item.ReviewDate.Value.ToShortDateString() : "")</td>
             <td class="align-middle">
                 <button class="btn btn-primary btn-sm"
                         onclick="openDocument('@Url.Action("GetDocument", "DocumentView", new { id = item.DocumentId, name = Scripts.KeepLettersAndSpacesOnly(item.Name) })',
-                                                   '@item.DocumentId', '@item.IsReviewed')"
+                                                   '@item.DocumentId', @item.IsReviewed.ToString().ToLower())"
                         data-toggle="tooltip" data-placement="top" title="Просмотр">
                     Просмотр
                 </button>

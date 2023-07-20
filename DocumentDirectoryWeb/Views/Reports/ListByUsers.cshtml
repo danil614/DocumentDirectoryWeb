@@ -37,7 +37,7 @@
                             {
                                 <tr>
                                     <td class="align-middle">@review.Document?.Name</td>
-                                    <td class="align-middle">@review.Document?.Category</td>
+                                    <td class="align-middle">@review.Document?.GetCategories()</td>
                                     <td class="align-middle">@(review.IsReviewed ? "Да" : "Нет")</td>
                                     <td class="align-middle">@(review.ReviewDate.HasValue ? review.ReviewDate.Value.ToShortDateString() : "")</td>
                                 </tr>

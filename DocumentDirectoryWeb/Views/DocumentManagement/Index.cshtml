@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = ViewBag.title ?? "Управление документами";
+    bool showCategory = ViewBag.showCategory ?? false;
     const string controllerName = "DocumentManagement";
 }
 
@@ -15,9 +16,10 @@
         <th>
             <a href="#" data-sort-by="name" data-sort-direction="desc">Название</a>
         </th>
-        <th>
-            <a href="#" data-sort-by="category" data-sort-direction="desc">Раздел</a>
-        </th>
+        @if (showCategory)
+        {
+            <th>Раздел</th>
+        }
         <th>Действия</th>
     </tr>
     </thead>

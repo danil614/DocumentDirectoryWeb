@@ -95,16 +95,14 @@ public class UsersController : Controller
     }
 
     [HttpPost]
-    public IActionResult SaveItem(User item, bool isEdit, string oldPassword)
+    public IActionResult SaveItem(User item, bool isEdit, string? oldPassword)
     {
         if (ModelState.IsValid)
         {
             if (isEdit) // Если редактирование пользователя
             {
                 if (item.Password != oldPassword) // Если пароль изменился, то хешируем его.
-                {
                     item.Password = HashPassword.GetHash(item.Password);
-                }
 
                 _context.Users.Update(item);
             }

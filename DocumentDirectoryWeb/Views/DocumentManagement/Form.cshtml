@@ -2,6 +2,7 @@
 
 @{
     bool isEdit = ViewBag.Edit;
+    List<Category> categories = ViewBag.Categories;
     ViewData["Title"] = (isEdit ? "Редактирование" : "Создание") + " документа";
 }
 
@@ -26,17 +27,25 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label" asp-for="CategoryId"></label>
-                    @Html.DropDownListFor(
-                        item => item.CategoryId,
-                        new SelectList(ViewBag.Categories, "Id", "Name"),
-                        new { @class = "form-select" })
-                    <span class="text-danger" asp-validation-for="CategoryId"></span>
+                    <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.docx">
+                    <div id="errorFile" class="text-danger" style="display: none;">Разрешены только файлы PDF и DOCX.</div>
                 </div>
 
                 <div class="mb-3">
-                    <input class="form-control" type="file" name="file" id="fileInput" accept=".pdf,.docx">
-                    <div id="errorFile" class="text-danger" style="display: none;">Разрешены только файлы PDF и DOCX.</div>
+                    <label class="form-label">Разделы документа</label>
+                    <div class="card">
+                        <div class="card-body">
+                            @foreach (var category in categories)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="@category.Id" id="categoryCheck-@category.Id"
+                                           name="SelectedCategoryIds"
+                                           checked="@(Model.Categories != null && Model.Categories.Any(c => c.Id == category.Id))">
+                                    <label class="form-check-label" for="categoryCheck-@category.Id">@category.Name</label>
+                                </div>
+                            }
+                        </div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -54,10 +63,9 @@
 
 <script>
     function saveAndConvert() {
-        $('#formAlert').hide();
+        $('#formAlert').hide(); // Скрываем сообщение об ошибке
 
-        let formData = getFormData();
-        
+        let formData = getFormData(); // Получаем данные для отправки
         if (!formData) {
             return;
         }
@@ -96,15 +104,14 @@
         const id = $('#Id').val();
         const isEdit = convertToJSBool($('#IsEdit').val());
         const name = $('#Name').val();
-        
+
         if (!name) {
             let formAlert = $('#formAlert');
             formAlert.text('Поля неправильно заполнены!');
             formAlert.show();
             return null;
         }
-        
-        const categoryId = $('#CategoryId').val();
+
         const fileInput = $('#fileInput')[0];
         const file = fileInput.files[0];
         const filePath = fileInput.value;
@@ -125,9 +132,13 @@
         let formData = new FormData();
         formData.append('id', id);
         formData.append('name', name);
-        formData.append('categoryId', categoryId);
         formData.append('file', file);
         formData.append('isEdit', isEdit);
+        
+        // Добавление выбранных категорий
+        $("input[name='SelectedCategoryIds']:checked").each(function () {
+            formData.append("selectedCategoryIds", $(this).val());
+        });
         
         return formData;
     }

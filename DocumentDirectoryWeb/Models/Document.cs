@@ -10,11 +10,18 @@ public class Document
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
 
-    [Display(Name = "Раздел")]
-    [Required(ErrorMessage = "Поле является обязательным.")]
-    public int CategoryId { get; set; }
+    public virtual List<Category>? Categories { get; set; }
 
-    [Display(Name = "Раздел")] public virtual DocumentCategory? Category { get; set; }
+    public virtual List<UserDocumentReview>? UserDocumentReviews { get; set; }
 
-    public virtual List<UserDocumentReview>? UserDocumentReviews { get; set; } = null!;
+    public string GetCategories()
+    {
+        var stringCategories = "";
+
+        if (Categories != null)
+            foreach (var category in Categories)
+                stringCategories += category.Name + (category == Categories.Last() ? "" : "; ");
+
+        return stringCategories;
+    }
 }

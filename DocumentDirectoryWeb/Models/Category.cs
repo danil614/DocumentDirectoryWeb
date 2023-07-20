@@ -2,7 +2,7 @@
 
 namespace DocumentDirectoryWeb.Models;
 
-public class DocumentCategory : IComparable<DocumentCategory>
+public class Category : IComparable<Category>
 {
     [Key] public int Id { get; set; }
 
@@ -10,7 +10,9 @@ public class DocumentCategory : IComparable<DocumentCategory>
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
 
-    public int CompareTo(DocumentCategory? other)
+    public virtual List<Document>? Documents { get; set; }
+
+    public int CompareTo(Category? other)
     {
         if (ReferenceEquals(this, other)) return 0;
         if (ReferenceEquals(null, other)) return 1;

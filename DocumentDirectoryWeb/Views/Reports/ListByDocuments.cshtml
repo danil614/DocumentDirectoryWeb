@@ -13,7 +13,7 @@
             <h2 class="accordion-header">
                 <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#document-@document.Id" aria-expanded="false" aria-controls="document-@document.Id">
                     <ul class="list-group list-group-horizontal">
-                        <li class="list-group-item">@document.Category</li>
+                        <li class="list-group-item">@document.GetCategories()</li>
                         <li class="list-group-item">@document.Name</li>
                     </ul>
                 </button>

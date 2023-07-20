@@ -2,6 +2,7 @@
 @model IQueryable<Document>
 
 @{
+    bool showCategory = ViewBag.showCategory ?? false;
     const string controllerName = "DocumentManagement";
 }
 
@@ -9,7 +10,10 @@
 {
     <tr>
         <td class="align-middle">@document.Name</td>
-        <td class="align-middle">@document.Category</td>
+        @if (showCategory)
+        {
+            <td class="align-middle">@document.GetCategories()</td>
+        }
         <td class="align-middle">
             <div class="btn-group" role="group" aria-label="Table Actions">
                 <button class="btn btn-primary btn-sm"

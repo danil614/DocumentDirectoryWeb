@@ -21,16 +21,19 @@ public class DocumentManagementController : Controller
     [HttpGet]
     public IActionResult Index(int? categoryId, string? categoryName)
     {
-        IQueryable<Document> documents;
+        IQueryable<Document>? documents;
 
         if (categoryId is null || categoryName is null)
         {
-            documents = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
+            documents = _context.Documents.Include(d => d.Categories)
+                .OrderBy(d => d.Name).ToList().AsQueryable();
+            ViewBag.showCategory = true;
         }
         else
         {
-            documents = _context.Documents.Include(e => e.Category)
-                .Where(e => e.CategoryId == categoryId).ToList().AsQueryable();
+            documents = _context.Categories.Include(c => c.Documents)
+                .FirstOrDefault(c => c.Id == categoryId)?.Documents?.OrderBy(d => d.Name)
+                .ToList().AsQueryable();
             ViewBag.title = categoryName;
         }
 
@@ -40,16 +43,13 @@ public class DocumentManagementController : Controller
     [HttpGet]
     public IActionResult GetSortedData(string sortBy, string sortDirection)
     {
-        var data = _context.Documents.Include(e => e.Category).ToList().AsQueryable();
+        var data = _context.Documents.Include(d => d.Categories).ToList().AsQueryable();
 
         data = sortBy switch
         {
             "name" => sortDirection == "asc"
                 ? data.OrderBy(item => item.Name)
                 : data.OrderByDescending(item => item.Name),
-            "category" => sortDirection == "asc"
-                ? data.OrderBy(item => item.Category)
-                : data.OrderByDescending(item => item.Category),
             _ => data
         };
 
@@ -76,10 +76,11 @@ public class DocumentManagementController : Controller
     [HttpGet]
     public IActionResult GetItem(string id)
     {
-        var item = _context.Documents.FirstOrDefault(item => item.Id == id);
+        var item = _context.Documents.Include(d => d.Categories)
+            .FirstOrDefault(item => item.Id == id);
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
-        ViewBag.Categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList();
+        ViewBag.Categories = _context.Categories.OrderBy(d => d.Name).ToList();
         ViewBag.Edit = true;
 
         return PartialView("Form", item);
@@ -90,20 +91,18 @@ public class DocumentManagementController : Controller
     {
         var item = new Document();
 
-        ViewBag.Categories = _context.DocumentCategories.OrderBy(d => d.Name).ToList();
+        ViewBag.Categories = _context.Categories.OrderBy(d => d.Name).ToList();
         ViewBag.Edit = false;
 
         return PartialView("Form", item);
     }
 
     [HttpPost]
-    public IActionResult SaveItem(string id, string name, int categoryId, IFormFile? file, bool isEdit)
+    public IActionResult SaveItem(string id, string name, List<int> selectedCategoryIds, IFormFile? file, bool isEdit)
     {
         if (string.IsNullOrEmpty(name)) return StatusCode(StatusCodes.Status500InternalServerError);
 
-        if (!isEdit)
-            // Генерируем GUID
-            id = Guid.NewGuid().ToString();
+        if (!isEdit) id = Guid.NewGuid().ToString(); // Генерируем GUID
 
         if (!isEdit || file != null)
         {
@@ -111,20 +110,47 @@ public class DocumentManagementController : Controller
             if (!isAdded) return StatusCode(StatusCodes.Status500InternalServerError, new { errorMessage });
         }
 
-        var item = new Document
-        {
-            Id = id,
-            Name = name,
-            CategoryId = categoryId
-        };
+        var selectedCategories = selectedCategoryIds
+            .Select(selectedCategory => _context.Categories.FirstOrDefault(c => c.Id == selectedCategory))
+            .ToList();
 
-        if (isEdit)
-            _context.Documents.Update(item);
+        var document = _context.Documents.Include(d => d.Categories)
+            .FirstOrDefault(d => d.Id == id);
+
+        if (document is null)
+        {
+            document = new Document
+            {
+                Id = id,
+                Name = name,
+                Categories = selectedCategories!
+            };
+            _context.Documents.Add(document);
+        }
         else
-            _context.Documents.Add(item);
+        {
+            UpdateCategoryDocument(selectedCategories, ref document);
+            _context.Documents.Update(document);
+        }
 
         var rowsAffected = _context.SaveChanges();
         return rowsAffected > 0 ? Ok() : StatusCode(StatusCodes.Status500InternalServerError);
+    }
+
+    private static void UpdateCategoryDocument(List<Category?> selectedCategories, ref Document document)
+    {
+        var existingCategories = document.Categories?.ToList() ?? new List<Category>();
+
+        var onDeleteCategories = existingCategories.Except(selectedCategories).ToList();
+        var onAddCategories = selectedCategories.Except(existingCategories).ToList();
+
+        foreach (var category in onDeleteCategories)
+            if (category != null)
+                document.Categories?.Remove(category);
+
+        foreach (var category in onAddCategories)
+            if (category != null)
+                document.Categories?.Add(category);
     }
 
     private bool SaveFile(IFormFile? file, string fileId, out string? message)
@@ -134,7 +160,7 @@ public class DocumentManagementController : Controller
             message = "Файл не найден.";
             return false;
         }
-        
+
         // Получаем расширение файла
         var extension = Path.GetExtension(file.FileName);
         string originalFilePath;
@@ -181,10 +207,7 @@ public class DocumentManagementController : Controller
         }
         finally
         {
-            if (!isPdf)
-            {
-                System.IO.File.Delete(originalFilePath);
-            }
+            if (!isPdf) System.IO.File.Delete(originalFilePath);
         }
     }
 }
