@@ -129,6 +129,7 @@ public class DocumentManagementController : Controller
         }
         else
         {
+            document.Name = name;
             UpdateCategoryDocument(selectedCategories, ref document);
             _context.Documents.Update(document);
         }

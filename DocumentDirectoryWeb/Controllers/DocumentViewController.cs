@@ -106,8 +106,8 @@ public class DocumentViewController : Controller
     }
 
     [HttpGet]
-    [Route("GetDocument/{id}/{name}")]
-    public IActionResult GetDocument(string id, string name)
+    [Route("{id}/Document")]
+    public IActionResult GetDocument(string id)
     {
         // Создаем путь до файла
         var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "files", "pdf", $"{id}.pdf");

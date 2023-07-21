@@ -4,7 +4,13 @@ function openDocument(pdfUrl, documentId, isReviewed) {
     pdfIframe.src = pdfUrl;
 
     $('#document-id').val(documentId);
-    $('#agreement-checkbox').prop("checked", isReviewed);
+
+    if (isReviewed === null) {
+        $('#agreement-group').hide();
+    }
+    else {
+        $('#agreement-checkbox').prop("checked", isReviewed);
+    }
 
     $('#pdf-modal').modal('show');
 }
@@ -29,7 +35,7 @@ function openModal(url, id) {
     $.ajax({
         url: url,
         type: "GET",
-        data: {id: id},
+        data: { id: id },
         success: function (response) {
             let modal = $('#modalWindow');
             modal.html(response);
@@ -58,7 +64,7 @@ function deleteItem(controllerName, id, reload = false) {
         $.ajax({
             url: '/' + controllerName + '/DeleteItem',
             type: "POST",
-            data: {id: id},
+            data: { id: id },
             success: function () {
                 refreshTableData(controllerName);
                 alert("Запись успешно удалена.");
