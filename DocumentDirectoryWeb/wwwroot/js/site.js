@@ -7,8 +7,7 @@ function openDocument(pdfUrl, documentId, isReviewed) {
 
     if (isReviewed === null) {
         $('#agreement-group').hide();
-    }
-    else {
+    } else {
         $('#agreement-checkbox').prop("checked", isReviewed);
     }
 
@@ -35,7 +34,7 @@ function openModal(url, id) {
     $.ajax({
         url: url,
         type: "GET",
-        data: { id: id },
+        data: {id: id},
         success: function (response) {
             let modal = $('#modalWindow');
             modal.html(response);
@@ -64,7 +63,7 @@ function deleteItem(controllerName, id) {
         $.ajax({
             url: '/' + controllerName + '/DeleteItem',
             type: "POST",
-            data: { id: id },
+            data: {id: id},
             success: function () {
                 alert("Запись успешно удалена.");
                 // Перезагружаем страницу
@@ -132,26 +131,26 @@ function convertToJSBool(csharpBool) {
 // Получает перевод сообщений в таблице.
 function getRussianDataTableTranslation() {
     return {
-        "decimal":        "",
-        "emptyTable":     "Нет данных для отображения",
-        "info":           "Показано с _START_ по _END_ из _TOTAL_ записей",
-        "infoEmpty":      "Показано 0 из 0 записей",
-        "infoFiltered":   "(отфильтровано из _MAX_ записей)",
-        "infoPostFix":    "",
-        "thousands":      ",",
-        "lengthMenu":     "Показать _MENU_ записей",
+        "decimal": "",
+        "emptyTable": "Нет данных для отображения",
+        "info": "Показано с _START_ по _END_ из _TOTAL_ записей",
+        "infoEmpty": "Показано 0 из 0 записей",
+        "infoFiltered": "(отфильтровано из _MAX_ записей)",
+        "infoPostFix": "",
+        "thousands": ",",
+        "lengthMenu": "Показать _MENU_ записей",
         "loadingRecords": "Загрузка...",
-        "processing":     "Обработка...",
-        "search":         "Поиск:",
-        "zeroRecords":    "Совпадающих записей не найдено",
+        "processing": "Обработка...",
+        "search": "Поиск:",
+        "zeroRecords": "Совпадающих записей не найдено",
         "paginate": {
-            "first":      "Первая",
-            "last":       "Последняя",
-            "next":       "Следующая",
-            "previous":   "Предыдущая"
+            "first": "Первая",
+            "last": "Последняя",
+            "next": "Следующая",
+            "previous": "Предыдущая"
         },
         "aria": {
-            "sortAscending":  ": активировать для сортировки столбца по возрастанию",
+            "sortAscending": ": активировать для сортировки столбца по возрастанию",
             "sortDescending": ": активировать для сортировки столбца по убыванию"
         }
     };
@@ -160,17 +159,17 @@ function getRussianDataTableTranslation() {
 // Настраивает таблицу для отображения на странице.
 function configureDataTable(columnIndexDisableSort) {
     // Настраиваем параметры таблицы
-    const table = $('#dataTable').DataTable( {
+    const table = $('#dataTable').DataTable({
         info: false,
         ordering: true,
         paging: false,
         stateSave: true,
         language: getRussianDataTableTranslation(),
-        columnDefs: [ {
+        columnDefs: [{
             targets: columnIndexDisableSort,
             orderable: false
-        } ]
-    } );
+        }]
+    });
 
     const searchInput = $('#searchInput');
 
@@ -181,13 +180,13 @@ function configureDataTable(columnIndexDisableSort) {
     $('#dataTable_filter').hide();
 
     // Устанавливаем событие для поля поиска
-    searchInput.on( 'input', function () {
-        table.search( this.value ).draw();
-    } );
+    searchInput.on('input', function () {
+        table.search(this.value).draw();
+    });
 
     // Устанавливаем событие для кнопки очистки поля поиска
-    $('#clearButton').on( 'click', function () {
+    $('#clearButton').on('click', function () {
         searchInput.val('').focus();
         table.search('').draw();
-    } );
+    });
 }

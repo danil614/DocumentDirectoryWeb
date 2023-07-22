@@ -1,8 +1,8 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
+using HtmlAgilityPack;
 using HtmlRendererCore.PdfSharp;
 using OpenXmlPowerTools;
 using PdfSharpCore;
-using HtmlAgilityPack;
 
 namespace DocumentDirectoryWeb.Helpers;
 
@@ -35,16 +35,14 @@ public static class Converter
         // Находим все элементы "a" (ссылки) и удаляем их из документа
         var linkElements = doc.DocumentNode.SelectNodes("//a");
         if (linkElements != null)
-        {
             foreach (var linkElement in linkElements)
             {
                 // Получаем текст из тега "a"
-                string linkText = linkElement.InnerText;
+                var linkText = linkElement.InnerText;
 
                 // Заменяем тег "a" его текстом
                 linkElement.ParentNode.ReplaceChild(doc.CreateTextNode(linkText), linkElement);
             }
-        }
 
         // Возвращаем очищенный HTML без ссылок
         return doc.DocumentNode.OuterHtml;

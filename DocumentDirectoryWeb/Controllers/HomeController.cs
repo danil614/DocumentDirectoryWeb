@@ -23,7 +23,7 @@ public class HomeController : Controller
                 return RedirectToAction("Login", "Account");
         }
     }
-    
+
     public IActionResult DeveloperInfo()
     {
         return View();
