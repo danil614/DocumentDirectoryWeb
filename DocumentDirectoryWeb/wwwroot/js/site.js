@@ -212,3 +212,66 @@ function convertToJSBool(csharpBool) {
     // Преобразование строки в нижний регистр и сравнение с "true"
     return csharpBool.toLowerCase() === "true";
 }
+
+// Получает перевод сообщений в таблице.
+function getRussianDataTableTranslation() {
+    return {
+        "decimal":        "",
+        "emptyTable":     "Нет данных для отображения",
+        "info":           "Показано с _START_ по _END_ из _TOTAL_ записей",
+        "infoEmpty":      "Показано 0 из 0 записей",
+        "infoFiltered":   "(отфильтровано из _MAX_ записей)",
+        "infoPostFix":    "",
+        "thousands":      ",",
+        "lengthMenu":     "Показать _MENU_ записей",
+        "loadingRecords": "Загрузка...",
+        "processing":     "Обработка...",
+        "search":         "Поиск:",
+        "zeroRecords":    "Совпадающих записей не найдено",
+        "paginate": {
+            "first":      "Первая",
+            "last":       "Последняя",
+            "next":       "Следующая",
+            "previous":   "Предыдущая"
+        },
+        "aria": {
+            "sortAscending":  ": активировать для сортировки столбца по возрастанию",
+            "sortDescending": ": активировать для сортировки столбца по убыванию"
+        }
+    };
+}
+
+// Настраивает таблицу для отображения на странице.
+function configureDataTable(columnIndexDisableSort) {
+    // Настраиваем параметры таблицы
+    const table = $('#dataTable').DataTable( {
+        info: false,
+        ordering: true,
+        paging: false,
+        stateSave: true,
+        language: getRussianDataTableTranslation(),
+        columnDefs: [ {
+            targets: columnIndexDisableSort,
+            orderable: false
+        } ]
+    } );
+
+    const searchInput = $('#searchInput');
+
+    // Устанавливаем значение поля поиска
+    searchInput.val($('#dataTable_filter input').val());
+
+    // Скрываем поиск по умолчанию
+    $('#dataTable_filter').hide();
+
+    // Устанавливаем событие для поля поиска
+    searchInput.on( 'input', function () {
+        table.search( this.value ).draw();
+    } );
+
+    // Устанавливаем событие для кнопки очистки поля поиска
+    $('#clearButton').on( 'click', function () {
+        searchInput.val('').focus();
+        table.search('').draw();
+    } );
+}
