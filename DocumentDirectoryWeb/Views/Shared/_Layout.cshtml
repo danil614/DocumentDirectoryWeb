@@ -29,9 +29,18 @@
 </div>
 
 <footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2023 – Справочник документов для ознакомления
-    </div>
+    @if (User.IsInRole("Admin"))
+    {
+        <div class="container">
+            &copy; 2023 – <a asp-controller="Home" asp-action="DeveloperInfo">Справочник документов для ознакомления</a>
+        </div>
+    }
+    else
+    {
+        <div class="container">
+            &copy; 2023 – Справочник документов для ознакомления
+        </div>
+    }
 </footer>
 
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

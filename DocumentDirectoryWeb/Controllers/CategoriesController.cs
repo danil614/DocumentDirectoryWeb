@@ -21,22 +21,6 @@ public class CategoriesController : Controller
         return View(_context.Categories.OrderBy(item => item.Name).ToList().AsQueryable());
     }
 
-    [HttpGet]
-    public IActionResult GetSortedData(string sortBy, string sortDirection)
-    {
-        var data = _context.Categories.ToList().AsQueryable();
-
-        data = sortBy switch
-        {
-            "name" => sortDirection == "asc"
-                ? data.OrderBy(item => item.Name)
-                : data.OrderByDescending(item => item.Name),
-            _ => data
-        };
-
-        return PartialView("_Table", data);
-    }
-
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteItem(int id)

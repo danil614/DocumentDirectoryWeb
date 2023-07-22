@@ -13,23 +13,21 @@
         {
             <td class="align-middle">@document.GetCategories()</td>
         }
-        <td class="align-middle">
-            <div class="btn-group" role="group" aria-label="Table Actions">
-                <button class="btn btn-primary btn-sm"
-                        onclick="openDocument('@Url.Action("GetDocument", "DocumentView", new { id = document.Id })',
+        <td class="align-middle text-nowrap">
+            <button class="btn btn-primary btn-sm"
+                    onclick="openDocument('@Url.Action("GetDocument", "DocumentView", new { id = document.Id })',
                                                '@document.Id', null)"
-                        data-toggle="tooltip" data-placement="top" title="Просмотр">
-                    <i class="fa fa-eye" aria-hidden="true"></i>
-                </button>
-                <button class="btn btn-secondary btn-sm" onclick="editItem('@controllerName', '@document.Id')"
-                        data-toggle="tooltip" data-placement="top" title="Редактировать">
-                    <i class="fa fa-pencil" aria-hidden="true"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="deleteItem('@controllerName', '@document.Id')"
-                        data-toggle="tooltip" data-placement="top" title="Удалить">
-                    <i class="fa fa-trash" aria-hidden="true"></i>
-                </button>
-            </div>
+                    data-toggle="tooltip" data-placement="top" title="Просмотр">
+                <i class="fa fa-eye" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-secondary btn-sm" onclick="editItem('@controllerName', '@document.Id')"
+                    data-toggle="tooltip" data-placement="top" title="Редактировать">
+                <i class="fa fa-pencil" aria-hidden="true"></i>
+            </button>
+            <button class="btn btn-danger btn-sm" onclick="deleteItem('@controllerName', '@document.Id')"
+                    data-toggle="tooltip" data-placement="top" title="Удалить">
+                <i class="fa fa-trash" aria-hidden="true"></i>
+            </button>
         </td>
     </tr>
 }

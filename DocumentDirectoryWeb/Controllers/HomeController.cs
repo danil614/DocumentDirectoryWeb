@@ -23,6 +23,11 @@ public class HomeController : Controller
                 return RedirectToAction("Login", "Account");
         }
     }
+    
+    public IActionResult DeveloperInfo()
+    {
+        return View();
+    }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()

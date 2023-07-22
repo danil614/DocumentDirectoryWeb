@@ -40,22 +40,6 @@ public class DocumentManagementController : Controller
         return View(documents);
     }
 
-    [HttpGet]
-    public IActionResult GetSortedData(string sortBy, string sortDirection)
-    {
-        var data = _context.Documents.Include(d => d.Categories).ToList().AsQueryable();
-
-        data = sortBy switch
-        {
-            "name" => sortDirection == "asc"
-                ? data.OrderBy(item => item.Name)
-                : data.OrderByDescending(item => item.Name),
-            _ => data
-        };
-
-        return PartialView("_Table", data);
-    }
-
     [HttpPost]
     [Authorize(Roles = "Admin, Editor")]
     public IActionResult DeleteItem(string id)

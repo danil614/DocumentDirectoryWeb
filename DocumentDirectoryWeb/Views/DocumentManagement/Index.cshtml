@@ -13,9 +13,7 @@
 <table class="table table-striped table-hover" id="dataTable">
     <thead>
     <tr>
-        <th>
-            <a href="#" data-sort-by="name" data-sort-direction="desc">Название</a>
-        </th>
+        <th>Название документа</th>
         @if (showCategory)
         {
             <th>Раздел</th>
@@ -31,11 +29,9 @@
 @await Html.PartialAsync("~/Views/DocumentView/Form.cshtml")
 
 <script>
-    $(document).ready(function() {
-        // Назначаем обработчик события клика на заголовки столбцов
-        $("#dataTable th a").on("click", function(event) {
-            event.preventDefault();
-            handleSortClick('@controllerName', $(this));
-        });
-    });
+    $(document).ready( function () {
+        // Настраиваем таблицу
+        const columnIndexDisableSort = @(showCategory ? 2 : 1);
+        configureDataTable(columnIndexDisableSort);
+    } );
 </script>

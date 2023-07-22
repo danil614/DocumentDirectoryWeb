@@ -59,18 +59,16 @@ function editItem(controllerName, id) {
 }
 
 // Функция для удаления записи по идентификатору.
-function deleteItem(controllerName, id, reload = false) {
+function deleteItem(controllerName, id) {
     if (confirm("Вы уверены, что хотите удалить эту запись?")) {
         $.ajax({
             url: '/' + controllerName + '/DeleteItem',
             type: "POST",
             data: { id: id },
             success: function () {
-                refreshTableData(controllerName);
                 alert("Запись успешно удалена.");
-                if (reload) {
-                    location.reload(); // Перезагрузка страницы
-                }
+                // Перезагружаем страницу
+                location.reload();
             },
             error: function (error) {
                 console.log(error);
@@ -78,88 +76,6 @@ function deleteItem(controllerName, id, reload = false) {
             }
         });
     }
-}
-
-// Функция для поиска в таблице
-function filterTable() {
-    let searchText = $("#searchInput")
-        .val().trim().toLowerCase();
-    let rows = $("#dataTable tbody tr");
-
-    rows.each(function () {
-        let row = $(this);
-        let showRow = false;
-        row.find("td").each(
-            function () {
-                let cellText = $(this).text().toLowerCase();
-                if (cellText.includes(searchText)) {
-                    showRow = true;
-                    return false;
-                }
-            });
-        if (showRow) {
-            row.show();
-        } else {
-            row.hide();
-        }
-    });
-}
-
-// Функция для очистки поля поиска.
-function clearInputFilter() {
-    $("#searchInput").val("").focus();
-    filterTable();
-}
-
-// Функция для обработки события клика на заголовке столбца.
-function handleSortClick(controllerName, current) {
-    // Удаляем классы сортировки у всех столбцов
-    $("#dataTable th a").removeClass("active-sort");
-
-    let sortBy = current.data("sort-by");
-    let currentSortDirection = current.data("sort-direction");
-
-    // Устанавливаем класс сортировки для текущего столбца
-    current.addClass("active-sort");
-
-    // Меняем направление сортировки
-    let newSortDirection = currentSortDirection === "asc" ? "desc" : "asc";
-
-    // Обновляем данные таблицы через AJAX
-    refreshTableData(controllerName, sortBy, newSortDirection);
-
-    // Обновляем значения атрибутов data-sort-direction
-    current.data("sort-direction", newSortDirection);
-}
-
-// Функция для обновления данных таблицы через AJAX.
-function refreshTableData(controllerName, sortBy = null, sortDirection = null) {
-    if (sortBy == null || sortDirection == null) {
-        // Получаем текущие значения сортировки
-        let currentSortColumn = $("#dataTable th a.active-sort");
-        sortBy = currentSortColumn.data("sort-by");
-        sortDirection = currentSortColumn.data("sort-direction");
-    }
-
-    let table = $("#dataTable tbody");
-
-    $.ajax({
-        url: '/' + controllerName + '/GetSortedData',
-        type: "GET",
-        data: {
-            sortBy: sortBy,
-            sortDirection: sortDirection
-        },
-        success: function (data) {
-            table.html(data);
-        },
-        error: function (error) {
-            console.log(error);
-            alert("Произошла ошибка при обновлении данных.");
-        }
-    });
-
-    $("#searchInput").val("");
 }
 
 // Функция для проверки данных на уникальность.

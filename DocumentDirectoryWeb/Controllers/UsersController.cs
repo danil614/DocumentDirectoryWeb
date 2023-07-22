@@ -27,31 +27,6 @@ public class UsersController : Controller
         return View(GetData().OrderBy(item => item.Login).ToList().AsQueryable());
     }
 
-    [HttpGet]
-    public IActionResult GetSortedData(string sortBy, string sortDirection)
-    {
-        var data = GetData().ToList().AsQueryable();
-
-        data = sortBy switch
-        {
-            "login" => sortDirection == "asc"
-                ? data.OrderBy(item => item.Login)
-                : data.OrderByDescending(item => item.Login),
-            "type" => sortDirection == "asc"
-                ? data.OrderBy(item => item.UserType)
-                : data.OrderByDescending(item => item.UserType),
-            "full-name" => sortDirection == "asc"
-                ? data.OrderBy(item => item.FullName)
-                : data.OrderByDescending(item => item.FullName),
-            "department" => sortDirection == "asc"
-                ? data.OrderBy(item => item.Department)
-                : data.OrderByDescending(item => item.Department),
-            _ => data
-        };
-
-        return PartialView("_Table", data);
-    }
-
     [HttpPost]
     [Authorize(Roles = "Admin")]
     public IActionResult DeleteItem(string id)
