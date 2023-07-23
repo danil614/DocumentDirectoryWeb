@@ -1,4 +1,5 @@
 ﻿using DocumentDirectoryWeb.Helpers;
+using DocumentDirectoryWeb.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -29,11 +30,34 @@ public class ReportsController : Controller
     [HttpGet]
     public IActionResult ListByDocuments()
     {
+        return View();
+    }
+
+    [HttpPost]
+    public IActionResult GetListByDocuments()
+    {
         var documents = _context.Documents.Include(d => d.Categories)
             .Include(d => d.UserDocumentReviews)!.ThenInclude(r => r.User)
             .ThenInclude(u => u!.Department)
             .OrderBy(d => d.Name).ToList().AsQueryable();
 
-        return View(documents);
+        var documentDataList = documents.Select(
+            document => new
+            {
+                document.Id,
+                document.Name,
+                Categories = document.GetCategories(),
+                Reviews = (document.UserDocumentReviews ?? new List<UserDocumentReview>()).Select(review =>
+                    new
+                    {
+                        review.User!.FullName,
+                        review.User.Login,
+                        Department = review.User.Department!.Name,
+                        review.IsReviewed,
+                        review.ReviewDate
+                    })
+            });
+
+        return Json(documentDataList);
     }
 }
