@@ -171,6 +171,11 @@ function configureDataTable(columnIndexDisableSort) {
         }]
     });
 
+    configureSearchInput(table);
+}
+
+// Настраивает поле поиска для таблицы.
+function configureSearchInput(table) {
     const searchInput = $('#searchInput');
 
     // Устанавливаем значение поля поиска

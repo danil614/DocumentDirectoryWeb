@@ -29,12 +29,12 @@ body {
 }
 
 td.details-control {
-    text-align:center;
-    color:forestgreen;
+    text-align: center;
+    color: forestgreen;
     cursor: pointer;
 }
 
 tr.shown td.details-control {
-    text-align:center;
-    color:red;
+    text-align: center;
+    color: red;
 }

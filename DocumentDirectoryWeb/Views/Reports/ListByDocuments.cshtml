@@ -6,6 +6,15 @@
 
 <h1>@ViewData["Title"]</h1>
 
+<div class="row mt-4 mb-3 g-sm-2">
+    <div class="input-group">
+        <input type="text" id="searchInput" class="form-control" placeholder="Поиск">
+        <button id="clearButton" class="btn btn-outline-secondary" type="button">
+            <i class="fa fa-times"></i>
+        </button>
+    </div>
+</div>
+
 <table id="dataTable" class="table border-black">
     <thead>
     <tr>
@@ -36,7 +45,11 @@
     }
 
     function configureLocalDataTable(data) {
+        // Настраиваем параметры таблицы
         const table = $('#dataTable').DataTable({
+            info: false,
+            ordering: true,
+            paging: false,
             data: data,
             columns: [
                 {
@@ -55,7 +68,7 @@
         });
 
         // Добавление функциональности развертывания/сворачивания
-        $('#dataTable tbody').on('click', 'td.details-control', function () {
+        $('#dataTable tbody').on('click', 'td', function () {
             const tr = $(this).closest('tr');
             const tdi = tr.find("i.fa");
             const row = table.row(tr);
@@ -74,6 +87,9 @@
                 tdi.first().addClass('fa-minus-square');
             }
         });
+
+        // Настраиваем поле поиска для таблицы
+        configureSearchInput(table);
     }
 
     // Функция для создания вложенной таблицы.
