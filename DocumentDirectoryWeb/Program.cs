@@ -5,6 +5,11 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.Configure<IISServerOptions>(options =>
+{
+    options.MaxRequestBodySize = 104857600; // 100 MB in bytes
+});
+
 // Получаем строку подключения из файла конфигурации
 var connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
