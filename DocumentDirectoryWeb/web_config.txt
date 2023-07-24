@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <location path="." inheritInChildApplications="false">
+    <system.webServer>
+      <security>
+        <requestFiltering>
+          <requestLimits maxAllowedContentLength="104857600" />
+          <!-- 100 MB in bytes -->
+        </requestFiltering>
+      </security>
+      <handlers>
+        <add name="aspNetCore" path="*" verb="*" modules="AspNetCoreModuleV2" resourceType="Unspecified" />
+      </handlers>
+      <aspNetCore processPath="dotnet" arguments=".\DocumentDirectoryWeb.dll" stdoutLogEnabled="false" stdoutLogFile=".\logs\stdout" hostingModel="inprocess" />
+    </system.webServer>
+  </location>
+</configuration>
+<!--ProjectGuid: f38ad6f9-60f4-444e-8376-3c80971842a5-->
