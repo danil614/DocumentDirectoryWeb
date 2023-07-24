@@ -19,12 +19,7 @@ public class ReportsController : Controller
     [HttpGet]
     public IActionResult ListByUsers()
     {
-        var users = _context.Users.Include(u => u.Department)
-            .Include(u => u.UserDocumentReviews)!.ThenInclude(r => r.Document)
-            .ThenInclude(d => d!.Categories)
-            .OrderBy(u => u.FullName).ToList().AsQueryable();
-
-        return View(users);
+        return View();
     }
 
     [HttpGet]
@@ -34,12 +29,40 @@ public class ReportsController : Controller
     }
 
     [HttpPost]
+    public IActionResult GetListByUsers()
+    {
+        var users = _context.Users.Include(u => u.Department)
+            .Include(u => u.UserDocumentReviews)!.ThenInclude(r => r.Document)
+            .ThenInclude(d => d!.Categories)
+            .OrderBy(u => u.FullName).ToList();
+
+        var userDataList = users.Select(
+            user => new
+            {
+                user.Id,
+                user.FullName,
+                user.Login,
+                Department = user.Department?.Name,
+                Reviews = (user.UserDocumentReviews ?? new List<UserDocumentReview>()).Select(review =>
+                    new
+                    {
+                        review.Document!.Name,
+                        Categories = review.Document.GetCategories(),
+                        review.IsReviewed,
+                        review.ReviewDate
+                    }).OrderBy(d => d.Name).AsEnumerable()
+            });
+
+        return Json(userDataList);
+    }
+
+    [HttpPost]
     public IActionResult GetListByDocuments()
     {
         var documents = _context.Documents.Include(d => d.Categories)
             .Include(d => d.UserDocumentReviews)!.ThenInclude(r => r.User)
             .ThenInclude(u => u!.Department)
-            .OrderBy(d => d.Name).ToList().AsQueryable();
+            .OrderBy(d => d.Name).ToList();
 
         var documentDataList = documents.Select(
             document => new
@@ -55,7 +78,7 @@ public class ReportsController : Controller
                         Department = review.User.Department!.Name,
                         review.IsReviewed,
                         review.ReviewDate
-                    })
+                    }).OrderBy(u => u.FullName).AsEnumerable()
             });
 
         return Json(documentDataList);

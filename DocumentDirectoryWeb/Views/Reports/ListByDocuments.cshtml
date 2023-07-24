@@ -1,6 +1,4 @@
-﻿@model IQueryable<Document>
-
-@{
+﻿@{
     ViewData["Title"] = "Отчет по документам";
 }
 
@@ -23,7 +21,6 @@
         <th>Раздел</th>
     </tr>
     </thead>
-    <tbody></tbody>
 </table>
 
 <script>
@@ -53,7 +50,7 @@
             data: data,
             columns: [
                 {
-                    className: 'details-control',
+                    className: 'align-middle details-control',
                     orderable: false,
                     data: null,
                     defaultContent: '',
@@ -61,8 +58,8 @@
                         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
                     }
                 },
-                { data: 'name' },
-                { data: 'categories' }],
+                { className: 'align-middle', data: 'name' },
+                { className: 'align-middle', data: 'categories' }],
             order: [[1, 'asc']],
             language: getRussianDataTableTranslation()
         });
