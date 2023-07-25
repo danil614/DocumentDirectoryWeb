@@ -60,6 +60,7 @@ public class DocumentViewController : Controller
                 Name = e.Name,
                 IsReviewed = isReviewed,
                 ReviewDate = reviewDate,
+                AllowReview = e.AllowReview,
                 Categories = e.GetCategories()
             };
         }).ToList();

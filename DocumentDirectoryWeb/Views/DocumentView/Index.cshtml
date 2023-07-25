@@ -38,12 +38,12 @@
             {
                 <td class="align-middle">@item.Categories</td>
             }
-            <td class="align-middle">@(item.IsReviewed ? "Да" : "Нет")</td>
+            <td class="align-middle">@(item.IsReviewed ? "Да" : "")</td>
             <td class="align-middle">@(item.ReviewDate.HasValue ? item.ReviewDate.Value.ToShortDateString() : "")</td>
             <td class="align-middle">
                 <button class="btn btn-primary btn-sm"
                         onclick="openDocument('@Url.Action("GetDocument", "DocumentView", new { id = item.DocumentId })',
-                                                   '@item.DocumentId', @item.IsReviewed.ToString().ToLower())"
+                                                   '@item.DocumentId', @(item.AllowReview ? item.IsReviewed.ToString().ToLower() : "null"))"
                         data-toggle="tooltip" data-placement="top" title="Просмотр">
                     Просмотр
                 </button>

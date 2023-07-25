@@ -10,6 +10,9 @@ public class Document
     [Display(Name = "Название")]
     public string Name { get; set; } = null!;
 
+    [Display(Name = "Разрешать ознакомление")]
+    public bool AllowReview { get; set; }
+
     public virtual List<Category>? Categories { get; set; }
 
     public virtual List<UserDocumentReview>? UserDocumentReviews { get; set; }

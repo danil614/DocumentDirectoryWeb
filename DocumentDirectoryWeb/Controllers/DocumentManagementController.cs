@@ -82,7 +82,8 @@ public class DocumentManagementController : Controller
     }
 
     [HttpPost]
-    public IActionResult SaveItem(string id, string name, List<int> selectedCategoryIds, IFormFile? file, bool isEdit)
+    public IActionResult SaveItem(string id, string name, List<int> selectedCategoryIds, IFormFile? file, bool isEdit,
+        bool allowReview)
     {
         if (string.IsNullOrEmpty(name)) return StatusCode(StatusCodes.Status500InternalServerError);
 
@@ -107,6 +108,7 @@ public class DocumentManagementController : Controller
             {
                 Id = id,
                 Name = name,
+                AllowReview = allowReview,
                 Categories = selectedCategories!
             };
             _context.Documents.Add(document);
@@ -114,6 +116,7 @@ public class DocumentManagementController : Controller
         else
         {
             document.Name = name;
+            document.AllowReview = allowReview;
             UpdateCategoryDocument(selectedCategories, ref document);
             _context.Documents.Update(document);
         }
