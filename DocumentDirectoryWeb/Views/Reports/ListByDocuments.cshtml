@@ -94,8 +94,7 @@
         let tableHtml = '<table class="table table-sm mx-auto" style="width:90%" id="users-' + data.id + '">' +
             '<thead>' +
             '<tr>' +
-            '<th>ФИО</th>' +
-            '<th>Логин</th>' +
+            '<th>Имя пользователя</th>' +
             '<th>Подразделение</th>' +
             '<th>Ознакомлен</th>' +
             '<th>Дата ознакомления</th>' +
@@ -106,10 +105,9 @@
         if (data.reviews) {
             data.reviews.forEach(function (review) {
                 tableHtml += '<tr>' +
-                    '<td class="align-middle">' + (review.fullName || '') + '</td>' +
                     '<td class="align-middle">' + (review.login || '') + '</td>' +
                     '<td class="align-middle">' + (review.department || '') + '</td>' +
-                    '<td class="align-middle">' + (review.isReviewed ? 'Да' : 'Нет') + '</td>' +
+                    '<td class="align-middle">' + (review.isReviewed ? 'Да' : '') + '</td>' +
                     '<td class="align-middle">' + (review.reviewDate ? new Date(review.reviewDate).toLocaleDateString() : '') + '</td>' +
                     '</tr>';
             });

@@ -40,14 +40,6 @@
                 </div>
 
                 <div class="mb-3 row">
-                    <label class="col-form-label col-sm-3" asp-for="FullName"></label>
-                    <div class="col-sm-9">
-                        <input class="form-control" asp-for="FullName"/>
-                        <span class="text-danger" asp-validation-for="FullName"></span>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
                     <label class="col-form-label col-sm-3" asp-for="UserTypeId"></label>
                     <div class="col-sm-9">
                         @Html.DropDownListFor(

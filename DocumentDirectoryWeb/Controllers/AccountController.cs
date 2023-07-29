@@ -21,6 +21,7 @@ public class AccountController : Controller
     [HttpGet]
     public IActionResult Login()
     {
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
         return View();
     }
 
@@ -29,55 +30,46 @@ public class AccountController : Controller
     {
         ViewBag.ErrorText = "У вас нет разрешения на доступ к этой странице. " +
                             "Пожалуйста, войдите под другим пользователем, который имеет соответствующие права доступа.";
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
         return View("Login");
     }
 
     [HttpPost]
-    public IActionResult Registration()
+    public IActionResult LoginByPassword(User user)
     {
-        var user = new User
-        {
-            Id = Guid.NewGuid().ToString()
-        };
-
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
-        return View(user);
-    }
 
-    [HttpPost]
-    public IActionResult Login(User user)
-    {
         if (string.IsNullOrEmpty(user.Login) || string.IsNullOrEmpty(user.Password))
         {
             ViewBag.ErrorText = "Логин и пароль не могут быть пустыми!";
-            return View(user);
+            return View("Login", user);
         }
 
         if (user.Login == _superUser.Username && user.Password == _superUser.Password)
         {
-            SignIn(_superUser.Username, _superUser.Username, 3, "Суперпользователь");
+            SignIn(_superUser.Username, _superUser.Username, 3);
             return RedirectToAction("Index", "Home");
         }
 
-        var item = _context.Users.FirstOrDefault(
+        var foundUser = _context.Users.FirstOrDefault(
             u =>
                 u.Login == user.Login &&
                 u.Password == HashPassword.GetHash(user.Password));
 
-        if (item is null)
+        if (foundUser is null)
         {
             ViewBag.ErrorText = "Пользователь с указанным логином и паролем не найден!";
-            return View(user);
+            return View("Login", user);
         }
 
-        SignIn(item.Id, item.Login, item.UserTypeId, item.FullName);
+        SignIn(foundUser.Id, foundUser.Login, foundUser.UserTypeId);
         return RedirectToAction("Index", "Home");
     }
 
     /// <summary>
     ///     Осуществляет вход в систему с помощью Cookie.
     /// </summary>
-    private void SignIn(string id, string login, int userTypeId, string fullName)
+    private void SignIn(string id, string login, int userTypeId)
     {
         var userType = _context.UserTypes.FirstOrDefault(t => t.Id == userTypeId)?.SystemName ?? "User";
 
@@ -85,7 +77,6 @@ public class AccountController : Controller
         {
             new(ClaimsIdentity.DefaultNameClaimType, login),
             new(ClaimsIdentity.DefaultRoleClaimType, userType),
-            new(ClaimTypes.GivenName, fullName),
             new(ClaimTypes.System, id)
         };
 
@@ -98,26 +89,39 @@ public class AccountController : Controller
     }
 
     [HttpPost]
-    public IActionResult Register(User user)
+    public IActionResult LoginByDepartment(User user)
     {
-        if (ModelState.IsValid)
+        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
+
+        if (string.IsNullOrEmpty(user.Login))
         {
+            ViewBag.ErrorText = "Имя пользователя не может быть пустым!";
+            return View("Login", user);
+        }
+
+        var foundUser =
+            _context.Users.FirstOrDefault(u => u.Login == user.Login && u.DepartmentId == user.DepartmentId);
+
+        if (foundUser is null)
+        {
+            user.Id = Guid.NewGuid().ToString();
             user.UserTypeId = 1; // Обычный пользователь
-            user.Password = HashPassword.GetHash(user.Password);
             _context.Users.Add(user);
 
             var rowsAffected = _context.SaveChanges();
 
             if (rowsAffected > 0)
             {
-                SignIn(user.Id, user.Login, user.UserTypeId, user.FullName);
+                SignIn(user.Id, user.Login, user.UserTypeId);
                 return RedirectToAction("Index", "Home");
             }
+
+            ViewBag.ErrorText = "Ошибка при создании нового пользователя!";
+            return View("Login", user);
         }
 
-        ViewBag.ErrorText = "Ошибка при регистрации. Поля неправильно заполнены!";
-        ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
-        return View("Registration", user);
+        SignIn(foundUser.Id, foundUser.Login, foundUser.UserTypeId);
+        return RedirectToAction("Index", "Home");
     }
 
     [HttpGet]

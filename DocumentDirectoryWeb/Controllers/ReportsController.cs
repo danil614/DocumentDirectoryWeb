@@ -34,13 +34,12 @@ public class ReportsController : Controller
         var users = _context.Users.Include(u => u.Department)
             .Include(u => u.UserDocumentReviews)!.ThenInclude(r => r.Document)
             .ThenInclude(d => d!.Categories)
-            .OrderBy(u => u.FullName).ToList();
+            .OrderBy(u => u.Login).ToList();
 
         var userDataList = users.Select(
             user => new
             {
                 user.Id,
-                user.FullName,
                 user.Login,
                 Department = user.Department?.Name,
                 Reviews = (user.UserDocumentReviews ?? new List<UserDocumentReview>()).Select(review =>
@@ -73,12 +72,11 @@ public class ReportsController : Controller
                 Reviews = (document.UserDocumentReviews ?? new List<UserDocumentReview>()).Select(review =>
                     new
                     {
-                        review.User!.FullName,
-                        review.User.Login,
-                        Department = review.User.Department!.Name,
+                        review.User?.Login,
+                        Department = review.User?.Department!.Name,
                         review.IsReviewed,
                         review.ReviewDate
-                    }).OrderBy(u => u.FullName).AsEnumerable()
+                    }).OrderBy(u => u.Login).AsEnumerable()
             });
 
         return Json(documentDataList);

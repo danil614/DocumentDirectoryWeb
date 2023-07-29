@@ -47,7 +47,7 @@ public class UsersController : Controller
         if (item == null) return NotFound(); // Если запись не найдена, возвращаем ошибку 404
 
         ViewBag.Edit = true;
-        ViewBag.OldPassword = item.Password;
+        if (item.Password != null) ViewBag.OldPassword = item.Password;
         ViewBag.UserTypes = _context.UserTypes.OrderBy(t => t.Name).ToList();
         ViewBag.Departments = _context.Departments.OrderBy(d => d.Name).ToList();
 
@@ -107,7 +107,8 @@ public class UsersController : Controller
 
         var isUnique = !_context.Users.Any(source =>
             source.Id != item.Id &&
-            source.Login == item.Login);
+            source.Login == item.Login &&
+            source.DepartmentId == item.DepartmentId);
 
         return Json(new { isUnique, isValid = ModelState.IsValid });
     }

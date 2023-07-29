@@ -17,8 +17,7 @@
     <thead>
     <tr>
         <th></th>
-        <th>ФИО</th>
-        <th>Логин</th>
+        <th>Имя пользователя</th>
         <th>Подразделение</th>
     </tr>
     </thead>
@@ -59,7 +58,6 @@
                         return '<i class="fa fa-plus-square" aria-hidden="true"></i>';
                     }
                 },
-                { className: 'align-middle', data: 'fullName' },
                 { className: 'align-middle', data: 'login' },
                 { className: 'align-middle', data: 'department' }],
             order: [[1, 'asc']],
@@ -109,7 +107,7 @@
                 tableHtml += '<tr>' +
                     '<td class="align-middle">' + (review.name || '') + '</td>' +
                     '<td class="align-middle">' + (review.categories || '') + '</td>' +
-                    '<td class="align-middle">' + (review.isReviewed ? 'Да' : 'Нет') + '</td>' +
+                    '<td class="align-middle">' + (review.isReviewed ? 'Да' : '') + '</td>' +
                     '<td class="align-middle">' + (review.reviewDate ? new Date(review.reviewDate).toLocaleDateString() : '') + '</td>' +
                     '</tr>';
             });

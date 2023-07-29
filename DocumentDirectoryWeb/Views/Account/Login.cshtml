@@ -17,20 +17,23 @@
         }
 
         <div class="card card-body mb-5 text-start">
-            @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+            @using (Html.BeginForm("LoginByDepartment", "Account", FormMethod.Post))
             {
                 @Html.ValidationSummary(true)
-
+        
                 <div class="mb-3">
-                    <label class="form-label" asp-for="Login"></label>
+                    <label class="form-label" asp-for="Login">ФИО полностью</label>
                     <input class="form-control" asp-for="Login"/>
                     <span class="text-danger" asp-validation-for="Login"></span>
                 </div>
-
+        
                 <div class="mb-3">
-                    <label class="form-label" asp-for="Password"></label>
-                    <input class="form-control" asp-for="Password"/>
-                    <span class="text-danger" asp-validation-for="Password"></span>
+                    <label class="form-label" asp-for="DepartmentId"></label>
+                    @Html.DropDownListFor(
+                        item => item.DepartmentId,
+                        new SelectList(ViewBag.Departments, "Id", "Name"),
+                        new { @class = "form-select" })
+                    <span class="text-danger" asp-validation-for="DepartmentId"></span>
                 </div>
 
                 <div class="text-end">
@@ -39,10 +42,33 @@
             }
         </div>
 
-        @using (Html.BeginForm("Registration", "Account", FormMethod.Post))
-        {
-            <button type="submit" class="btn btn-link w-100">Регистрация</button>
-        }
+        <button class="btn btn-light mb-3 w-100" type="button" data-bs-toggle="collapse" data-bs-target="#collapseLogin" aria-expanded="false" aria-controls="collapseLogin">
+            Вход с использованием логина и пароля
+        </button>
+        <div class="collapse" id="collapseLogin">
+            <div class="card card-body mb-5 text-start">
+                @using (Html.BeginForm("LoginByPassword", "Account", FormMethod.Post))
+                {
+                    @Html.ValidationSummary(true)
+        
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Login"></label>
+                        <input class="form-control" asp-for="Login"/>
+                        <span class="text-danger" asp-validation-for="Login"></span>
+                    </div>
+        
+                    <div class="mb-3">
+                        <label class="form-label" asp-for="Password"></label>
+                        <input class="form-control" asp-for="Password"/>
+                        <span class="text-danger" asp-validation-for="Password"></span>
+                    </div>
+        
+                    <div class="text-end">
+                        <button class="btn btn-primary" type="submit">Войти</button>
+                    </div>
+                }
+            </div>
+        </div>
     </div>
     <div class="col"></div>
 </div>
