@@ -28,6 +28,12 @@ public class ReportsController : Controller
         return View();
     }
 
+    [HttpGet]
+    public IActionResult UserDocumentReviews()
+    {
+        return View();
+    }
+
     [HttpPost]
     public IActionResult GetListByUsers()
     {
@@ -80,5 +86,24 @@ public class ReportsController : Controller
             });
 
         return Json(documentDataList);
+    }
+
+    [HttpPost]
+    public IActionResult GetUserDocumentReviews()
+    {
+        var userDocumentReviews = _context.UserDocumentReviews
+            .Include(r => r.Document).ThenInclude(d => d!.Categories)
+            .Include(r => r.User).ThenInclude(u => u!.Department)
+            .Select(review => new
+            {
+                review.Document!.Name,
+                Categories = review.Document.GetCategories(),
+                review.User!.Login,
+                Department = review.User.Department!.Name,
+                review.IsReviewed,
+                review.ReviewDate
+            });
+
+        return Json(userDocumentReviews);
     }
 }
