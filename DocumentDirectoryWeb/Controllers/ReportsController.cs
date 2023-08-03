@@ -97,7 +97,7 @@ public class ReportsController : Controller
             .Select(review => new
             {
                 review.Document!.Name,
-                Categories = review.Document.GetCategories(),
+                Categories = review.Document.Categories!.Select(c => new { c.Name }),
                 review.User!.Login,
                 Department = review.User.Department!.Name,
                 review.IsReviewed,

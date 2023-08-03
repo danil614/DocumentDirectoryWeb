@@ -4,12 +4,14 @@
 
 <h1>@ViewData["Title"]</h1>
 
-<div class="row mt-4 mb-3 g-sm-2">
-    <div class="input-group">
-        <input type="text" id="searchInput" class="form-control" placeholder="Поиск">
-        <button id="clearButton" class="btn btn-outline-secondary" type="button">
-            <i class="fa fa-times"></i>
-        </button>
+<div class="row justify-content-between" id="buttonsGroup">
+    <div class="mt-4 mb-3 g-sm-2 col-sm-6">
+        <div class="input-group">
+            <input type="text" id="searchInput" class="form-control" placeholder="Поиск">
+            <button id="clearButton" class="btn btn-outline-secondary" type="button">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
     </div>
 </div>
 
@@ -46,6 +48,16 @@
 
     function configureLocalDataTable(data) {
         // Настраиваем параметры таблицы
+        let languageSearchPanes = {
+            searchPanes: {
+                title: 'Активные фильтры: %d',
+                collapseMessage: 'Свернуть все',
+                showMessage: 'Показать все',
+                clearMessage: 'Очистить все'
+            }
+        };
+        let languageDict = Object.assign({}, getRussianDataTableTranslation(), languageSearchPanes);
+
         const table = $('#dataTable').DataTable({
             info: false,
             ordering: true,
@@ -54,14 +66,22 @@
             columns:
             [
                 { className: 'align-middle', data: 'name' },
-                { className: 'align-middle', data: 'categories' },
+                {
+                    className: 'align-middle', data: 'categories',
+                    render: {
+                        _: '[; ].name',
+                        sp: '[].name'
+                    },
+                    searchPanes: {
+                        orthogonal: 'sp'
+                    }
+                },
                 { className: 'align-middle', data: 'login' },
                 { className: 'align-middle', data: 'department' },
                 { className: 'align-middle', data: 'isReviewed', render: function(isReviewed) { return isReviewed ? 'Да' : '' } },
                 { className: 'align-middle', data: 'reviewDate', render: DataTable.render.date() }
             ],
             searchPanes: {
-                layout: 'columns-4',
                 columns: [0, 1, 2, 3]
             },
             columnDefs: [
@@ -73,10 +93,26 @@
                 }
             ],
             buttons: [
-                'excel', 'pdf', 'print'
+                {
+                    extend: 'excel',
+                    text: 'Excel'
+                },
+                {
+                    extend: 'pdf',
+                    text: 'PDF'
+                },
+                {
+                    extend: 'print',
+                    text: 'Печать'
+                }
             ],
-            dom: 'BPlfrtip',
-            language: getRussianDataTableTranslation()
+            dom: 'BPfrtip',
+            language: languageDict,
+            initComplete: function () {
+                let dtButtons = $('.dt-buttons');
+                dtButtons.removeClass('btn-group flex-wrap').addClass('mt-4 mb-3 g-sm-2 col-sm-6');
+                $('#buttonsGroup').prepend(dtButtons);
+            }
         });
 
         // Настраиваем поле поиска для таблицы
