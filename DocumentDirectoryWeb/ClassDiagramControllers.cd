@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="DocumentDirectoryWeb.Controllers.AccountController">
+    <Position X="10" Y="5.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAACAIAAABAAAACAAAAIABAAAAAAAAAAwAAAAAAA=</HashCode>
+      <FileName>Controllers\AccountController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.CategoriesController">
+    <Position X="10.25" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAABEAAAQABAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\CategoriesController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.DepartmentsController">
+    <Position X="12.5" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAABEAAAQABAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\DepartmentsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.DocumentManagementController">
+    <Position X="5" Y="2" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAABEAAAQAAAAAAAAAAEAAABAEAAAAIAAA=</HashCode>
+      <FileName>Controllers\DocumentManagementController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.DocumentViewController">
+    <Position X="7.5" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAAABAAAAAAAAAAAAQAAEAAAAAkAAAAAAAA=</HashCode>
+      <FileName>Controllers\DocumentViewController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.HomeController">
+    <Position X="12.25" Y="5.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAASAAAAAAAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\HomeController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.ReportsController">
+    <Position X="5" Y="5.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAACABAAAgBAAAAAAAAQBAAAAAAAAAAAAQAA=</HashCode>
+      <FileName>Controllers\ReportsController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DocumentDirectoryWeb.Controllers.UsersController">
+    <Position X="8" Y="2" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAEAAABEAAAQABAAAAAAAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>Controllers\UsersController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Arial" Size="10" />
+</ClassDiagram>
